@@ -1,20 +1,27 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, Text, View } from "react-native";
 
-export default function SolidButton({ text, onPress, width = "100%", color = "#f01d71" }) {
+export default function SolidButton({
+  text,
+  onPress,
+  width = "100%",
+  color = "#f01d71",
+  borderRadius = 16,
+}) {
   const styles = StyleSheet.create({
     button: {
       marginTop: 25,
-      borderRadius: 8,
+      borderRadius: borderRadius,
       paddingVertical: 14,
       paddingHorizontal: 10,
       backgroundColor: color,
       width: width,
       alignSelf: "center",
+      elevation: 3,
     },
     buttonText: {
       color: "white",
-      textTransform: "uppercase",
+      textTransform: "capitalize",
       fontSize: 16,
       textAlign: "center",
       fontFamily: "nunito-bold",

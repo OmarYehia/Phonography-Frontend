@@ -30,9 +30,10 @@ function AuthContextProvider(props) {
           } else {
             // handle errors
             console.log(jsonRes);
+            return jsonRes;
           }
         } catch (error) {
-          console.log(error);
+          return error;
         }
       },
       signOut: () => props.dispatch({ type: "SIGN_OUT" }),

@@ -12,6 +12,17 @@ export const globalStyles = StyleSheet.create({
   },
   normalText: {
     fontFamily: "nunito-regular",
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 3,
+    lineHeight: 20,
+  },
+  textLink: {
+    fontFamily: "nunito-regular",
+    fontSize: 16,
+    textAlign: "center",
+    color: "blue",
+    textDecorationLine: "underline",
   },
   paragraph: {
     marginVertical: 8,
@@ -28,6 +39,6 @@ export const globalStyles = StyleSheet.create({
   errorText: {
     color: "crimson",
     fontWeight: "bold",
-    marginBottom: 15,
+    marginBottom: 8,
   },
 });

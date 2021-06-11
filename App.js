@@ -1,10 +1,11 @@
 import "react-native-gesture-handler";
-import React, { useReducer, useMemo, useEffect } from "react";
+import React, { useReducer, useEffect } from "react";
 import { useFonts } from "expo-font";
 import * as SecureStore from "expo-secure-store";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Home from "./screens/Home";
+import RegisterScreen from "./screens/RegisterScreen";
 import jwt_decode from "jwt-decode";
 import LoginScreen from "./screens/LoginScreen";
 import { AuthContextProvider } from "./context/AuthContext";
@@ -16,6 +17,8 @@ export default function App() {
   const [isFontsLoaded] = useFonts({
     "nunito-regular": require("./assets/fonts/Nunito-Regular.ttf"),
     "nunito-bold": require("./assets/fonts/Nunito-Bold.ttf"),
+    "nunito-black": require("./assets/fonts/Nunito-Black.ttf"),
+    "nunito-extraBold": require("./assets/fonts/Nunito-ExtraBold.ttf"),
   });
 
   /* useReducer is similiar to useState, it takes two arguments(reducer, initialState), it changes the
@@ -105,7 +108,14 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator>
           {state.userToken == null ? (
-            <Stack.Screen name="Login" component={LoginScreen} />
+            <>
+              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+              <Stack.Screen
+                name="Register"
+                component={RegisterScreen}
+                options={{ headerShown: false }}
+              />
+            </>
           ) : (
             <Stack.Screen name="Home" component={Home} />
           )}

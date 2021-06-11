@@ -5,101 +5,216 @@ import {
   StyleSheet,
   View,
   TextInput,
-  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Image,
   Dimensions,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
+import SolidButton from "../components/shared/SolidButton";
+import { globalStyles } from "../styles/global";
+import { Formik } from "formik";
+import * as yup from "yup";
 
-export default function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const loginSchema = yup.object({
+  email: yup
+    .string()
+    .required("Please enter your email address.")
+    .email("Please enter a valid email."),
+  password: yup
+    .string()
+    .required("Please enter your password.")
+    .min(8, "Password is at least 8 characters long."),
+});
+
+export default function LoginScreen({ navigation }) {
+  const [showPassword, setShowPassword] = useState(false);
 
   const { signIn } = useContext(AuthContext);
+
   return (
-    <ImageBackground source={require("../assets/splash.png")} style={styles.backgroundRegister}>
-      <View style={styles.formContainer}>
-        <View>
-          <Text style={styles.title}>Login</Text>
-        </View>
-        <View style={styles.inputFieldsContainer}>
-          <View style={styles.inputGroup}>
-            <TextInput
-              style={styles.input}
-              placeholder="Email Address"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              keyboardType="email-address"
-            />
-          </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ImageBackground source={require("../assets/authbackground.png")} style={styles.background}>
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validationSchema={loginSchema}
+          onSubmit={async (values, actions) => {
+            actions.resetForm();
+            const res = await signIn(values);
+            console.log(res);
+            if (!res.success) {
+              if (res.errors.email) {
+                Alert.alert(
+                  "Need help finding your account?",
+                  `It looks like ${values.email} isn't connected to an account, if you believe this is wrong please contact us immediatly and we can help you log in to your account.`,
+                  [
+                    { text: "Try again" },
 
-          <View style={{ ...styles.inputGroup, ...styles.passwordGroup }}>
-            <TextInput
-              style={{ ...styles.input, flex: 1, borderBottomWidth: 0 }}
-              placeholder="Password"
-              secureTextEntry
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-            />
-            <Ionicons name="eye-sharp" size={22} color="#aaa" />
-          </View>
+                    {
+                      text: "Create an Account",
+                      onPress: () => {
+                        navigation.navigate("Register");
+                      },
+                    },
+                  ],
+                  {
+                    cancelable: true,
+                  }
+                );
+              } else {
+                Alert.alert(
+                  "Have you lost your password?",
+                  `You are entering a wrong password, if you believe this is wrong please contact us immediatly and we can help you log in to your account`,
+                  [
+                    { text: "Try again", style: "positive" },
+                    {
+                      text: "Forgot password?",
+                      onPress: () => {
+                        // Navigate to forgot password
+                        console.log("User forgot password");
+                      },
+                    },
+                  ],
+                  {
+                    cancelable: true,
+                  }
+                );
+              }
+            }
+          }}>
+          {(props) => (
+            <View style={styles.formContainer}>
+              <View>
+                <Image source={require("../assets/prototypelogo.png")} style={styles.logo} />
+              </View>
 
-          <View style={styles.submitBtnContainer}>
-            <TouchableOpacity style={styles.submitBtn} onPress={() => signIn({ email, password })}>
-              <Text style={styles.submitBtnText}>Login</Text>
-            </TouchableOpacity>
-          </View>
+              <View>
+                <Text style={styles.title}>Phonography</Text>
+              </View>
 
-          <Text>Forgot password?</Text>
+              <View style={styles.inputFieldsContainer}>
+                <View style={styles.inputGroup}>
+                  <TextInput
+                    style={{ ...styles.input, flex: 1, borderBottomWidth: 0 }}
+                    placeholder="Email Address"
+                    value={props.values.email}
+                    onChangeText={props.handleChange("email")}
+                    onBlur={props.handleBlur("email")}
+                    keyboardType="email-address"
+                  />
+                </View>
+                {props.touched.email && props.errors.email && (
+                  <Text style={globalStyles.errorText}>{props.errors.email}</Text>
+                )}
 
-          <View style={styles.bottomContainer}>
-            <Text>Don't have an account?</Text>
-            <Text styles={styles.textLink}>Create an account.</Text>
-          </View>
-        </View>
-      </View>
-    </ImageBackground>
+                <View style={styles.inputGroup}>
+                  <TextInput
+                    style={{ ...styles.input, flex: 1 }}
+                    placeholder="Password"
+                    secureTextEntry={!showPassword}
+                    value={props.values.password}
+                    onChangeText={props.handleChange("password")}
+                    onBlur={props.handleBlur("password")}
+                  />
+                  {!showPassword && (
+                    <Ionicons
+                      name="eye-sharp"
+                      size={22}
+                      color="#aaa"
+                      onPress={() => setShowPassword(!showPassword)}
+                    />
+                  )}
+                  {showPassword && (
+                    <Ionicons
+                      name="eye-off-sharp"
+                      size={22}
+                      color="#000"
+                      onPress={() => setShowPassword(!showPassword)}
+                    />
+                  )}
+                </View>
+                {props.touched.password && props.errors.password && (
+                  <Text style={globalStyles.errorText}>{props.errors.password}</Text>
+                )}
+
+                <View style={styles.submitBtnContainer}>
+                  <SolidButton text="Login" onPress={props.handleSubmit} borderRadius={30} />
+                </View>
+
+                <View style={styles.bottomContainer}>
+                  <Text style={globalStyles.normalText}>Don't have an account?</Text>
+                  <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+                    <Text style={globalStyles.textLink}>Create an account.</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <TouchableOpacity style={{ position: "absolute", bottom: "5%" }}>
+                  <Text
+                    style={{
+                      ...globalStyles.normalText,
+                      textDecorationLine: "underline",
+                    }}>
+                    Forgot password?
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </Formik>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  backgroundRegister: {
+  background: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    height: Dimensions.get("window").height * 1.1,
+    // width: "100%",
+    // height: "100%",
     position: "absolute",
     top: 0,
     left: 0,
   },
+  logo: {
+    width: 150,
+    height: 150,
+    marginTop: "30%",
+  },
   formContainer: {
     padding: 30,
     flex: 1,
+    alignItems: "center",
+    position: "relative",
   },
   title: {
-    marginTop: 90,
-    marginBottom: 120,
-    fontSize: 28,
-    fontWeight: "bold",
+    fontSize: 36,
+    fontFamily: "nunito-extraBold",
+    color: "#462C6A",
+    marginBottom: 20,
   },
   inputFieldsContainer: {
     flex: 1,
     alignItems: "center",
   },
   inputGroup: {
-    width: "100%",
-    // backgroundColor: "pink",
     marginVertical: 13,
-  },
-  passwordGroup: {
     flexDirection: "row",
     alignItems: "center",
-    // flex: 1,
     borderBottomColor: "#444",
     borderBottomWidth: 1,
   },
   input: {
-    borderBottomColor: "#444",
-    borderBottomWidth: 1,
     paddingBottom: 6,
     paddingTop: 10,
+  },
+  submitBtnContainer: {
+    width: 150,
+  },
+  bottomContainer: {
+    marginVertical: 20,
   },
 });
