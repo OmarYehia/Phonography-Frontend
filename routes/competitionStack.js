@@ -14,4 +14,6 @@ const screens = {
 }
 const CompetitionStack = createStackNavigator(screens);
 
-export default createAppContainer(CompetitionStack);
+//export default createAppContainer(CompetitionStack);
+
+export default CompetitionStack;
