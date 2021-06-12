@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet,Text, View, FlatList, TouchableOpacity } from 'react-native';
 import { globalStyles } from '../../styles/global';
 import Card from '../../shared/card';
-export default function Competition(){
+
+
+
+export default function Competition({ navigation }){
     const [competition, setCompetition] = useState(null);
 
     const pressHandler = (item) => {
-        console.log(item)
+        navigation.navigate('ContestDetails', item);
     }
     
     useEffect(()=>{
@@ -23,6 +26,8 @@ export default function Competition(){
           })
           .then(data => {
               setCompetition(data.data.competitions)
+              
+
           })
           .catch(err => {
               console.log(err)

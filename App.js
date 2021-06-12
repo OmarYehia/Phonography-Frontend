@@ -1,12 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Competition from './screens/competition/competition';
+import CompetitionNavigator from './routes/competitionStack'
+
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Competition/>
-    </View>
+    
+      <CompetitionNavigator/>
+    
   );
 }
 
