@@ -10,7 +10,7 @@ export default function SolidButton({
 }) {
   const styles = StyleSheet.create({
     button: {
-      marginTop: 25,
+      marginTop: 20,
       borderRadius: borderRadius,
       paddingVertical: 14,
       paddingHorizontal: 10,

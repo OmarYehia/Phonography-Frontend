@@ -18,6 +18,7 @@ import SolidButton from "../components/shared/SolidButton";
 import { globalStyles } from "../styles/global";
 import { Formik } from "formik";
 import * as yup from "yup";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const loginSchema = yup.object({
   email: yup
@@ -32,6 +33,7 @@ const loginSchema = yup.object({
 
 export default function LoginScreen({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { signIn } = useContext(AuthContext);
 
@@ -43,8 +45,9 @@ export default function LoginScreen({ navigation }) {
           validationSchema={loginSchema}
           onSubmit={async (values, actions) => {
             actions.resetForm();
+            setLoading(true);
             const res = await signIn(values);
-            console.log(res);
+            setLoading(false);
             if (!res.success) {
               if (res.errors.email) {
                 Alert.alert(
@@ -87,6 +90,7 @@ export default function LoginScreen({ navigation }) {
           }}>
           {(props) => (
             <View style={styles.formContainer}>
+              <Spinner visible={loading} />
               <View>
                 <Image source={require("../assets/prototypelogo.png")} style={styles.logo} />
               </View>
@@ -151,7 +155,7 @@ export default function LoginScreen({ navigation }) {
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={{ position: "absolute", bottom: "5%" }}>
+                <TouchableOpacity style={{ position: "absolute", bottom: "3%" }}>
                   <Text
                     style={{
                       ...globalStyles.normalText,
@@ -182,7 +186,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 150,
-    marginTop: "30%",
+    marginTop: "25%",
   },
   formContainer: {
     padding: 30,
@@ -194,7 +198,7 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontFamily: "nunito-extraBold",
     color: "#462C6A",
-    marginBottom: 20,
+    marginBottom: 30,
   },
   inputFieldsContainer: {
     flex: 1,
@@ -216,5 +220,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     marginVertical: 20,
+    position: "absolute",
+    bottom: "10%",
   },
 });

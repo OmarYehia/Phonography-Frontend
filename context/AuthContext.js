@@ -27,11 +27,9 @@ function AuthContextProvider(props) {
             // Saving the token in SecureStore
             await SecureStore.setItemAsync("userToken", jsonRes.data.token);
             props.dispatch({ type: "SIGN_IN", token: jsonRes.data.token });
-          } else {
-            // handle errors
-            console.log(jsonRes);
-            return jsonRes;
           }
+
+          return jsonRes;
         } catch (error) {
           return error;
         }
@@ -47,11 +45,14 @@ function AuthContextProvider(props) {
 
           const jsonRes = await res.json();
 
-          await SecureStore.setItemAsync("userToken", jsonRes.data.token);
-
-          props.dispatch({ type: "SIGN_IN", token: jsonRes.data.token });
+          if (jsonRes.success) {
+            // Saving the token in SecureStore
+            await SecureStore.setItemAsync("userToken", jsonRes.data.token);
+            props.dispatch({ type: "SIGN_IN", token: jsonRes.data.token });
+          }
+          return jsonRes;
         } catch (error) {
-          console.log(error);
+          return error;
         }
       },
     }),

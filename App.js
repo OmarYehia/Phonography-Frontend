@@ -5,10 +5,11 @@ import * as SecureStore from "expo-secure-store";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Home from "./screens/Home";
-import RegisterScreen from "./screens/RegisterScreen";
 import jwt_decode from "jwt-decode";
-import LoginScreen from "./screens/LoginScreen";
 import { AuthContextProvider } from "./context/AuthContext";
+import AuthTabNavigator from "./navigators/AuthTabNavigator";
+import RegisterScreen from "./screens/RegisterScreen";
+import LoginScreen from "./screens/LoginScreen";
 
 const Stack = createStackNavigator();
 
@@ -106,15 +107,11 @@ export default function App() {
   return (
     <AuthContextProvider dispatch={dispatch}>
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator headerMode="none">
           {state.userToken == null ? (
             <>
-              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-              <Stack.Screen
-                name="Register"
-                component={RegisterScreen}
-                options={{ headerShown: false }}
-              />
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Register" component={RegisterScreen} />
             </>
           ) : (
             <Stack.Screen name="Home" component={Home} />
