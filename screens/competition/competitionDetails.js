@@ -4,23 +4,23 @@ import { globalStyles } from '../../styles/global';
 import Card from '../../shared/card';
 
 
-export default function CompetitionDetails({ navigation }) {
+export default function CompetitionDetails({ route , navigation }) {
 
     return (
         <View style={globalStyles}>
             <Card>
-                <Text style={{...globalStyles.titleText, ...styles.nameText}}>{navigation.getParam('name')}</Text>
+                <Text style={{...globalStyles.titleText, ...styles.nameText}}>{route.params.name}</Text>
                 <View style={styles.items}>
                    <Text>Sponsor: </Text>
-                   <Text>{navigation.getParam('sponsor').name}</Text>
+                   <Text>{route.params.sponsor.name}</Text>
                 </View>
                 <View style={styles.items}>
                     <Text>Prizes: </Text>
-                    <Text>{navigation.getParam('prizes')}</Text>
+                    <Text>{route.params.prizes}</Text>
                 </View>
                 <View style={{...styles.items,...styles.date}}>
-                    <Text>Starts at:{navigation.getParam('startDate')}</Text>
-                    <Text>Ends at: {navigation.getParam('endDate')}</Text>
+                    <Text>Starts at:{route.params.startDate}</Text>
+                    <Text>Ends at: {route.params.endDate}</Text>
                 </View>
                 
             </Card>

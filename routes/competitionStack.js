@@ -1,19 +1,15 @@
-import { createStackNavigator } from "react-navigation-stack";
-import { createAppContainer } from 'react-navigation';
+import React from "react";
+import { createStackNavigator } from '@react-navigation/stack';
 import Competition from '../screens/competition/competition';
 import CompetitionDetails from '../screens/competition/competitionDetails';
 
+const Stack = createStackNavigator();
 
-const screens = {
-    Contests: {
-        screen: Competition
-    },
-    ContestDetails: {
-        screen: CompetitionDetails 
-    }
+export default function CompetitionStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Contests" component={Competition} />
+      <Stack.Screen name="ContestDetails" component={CompetitionDetails } />
+    </Stack.Navigator>
+  );
 }
-const CompetitionStack = createStackNavigator(screens);
-
-//export default createAppContainer(CompetitionStack);
-
-export default CompetitionStack;
