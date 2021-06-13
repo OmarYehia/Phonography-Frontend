@@ -1,3 +1,4 @@
+import CompetitionNavigator from "./routes/competitionStack";
 import "react-native-gesture-handler";
 import React, { useReducer, useEffect } from "react";
 import { useFonts } from "expo-font";
@@ -114,6 +115,7 @@ export default function App() {
             </>
           ) : (
             <Stack.Screen name="Home" component={Home} initialParams={state} />
+            //  <Stack.Screen name="Home" component={CompetitionNavigator} />
           )}
         </Stack.Navigator>
       </NavigationContainer>

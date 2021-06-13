@@ -21,6 +21,7 @@ function AuthContextProvider(props) {
           });
 
           const jsonRes = await res.json();
+          console.log(jsonRes);
 
           if (jsonRes.success) {
             // Saving the token in SecureStore
