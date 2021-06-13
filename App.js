@@ -7,7 +7,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import Home from "./screens/Home";
 import jwt_decode from "jwt-decode";
 import { AuthContextProvider } from "./context/AuthContext";
-import AuthTabNavigator from "./navigators/AuthTabNavigator";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
 
@@ -79,7 +78,7 @@ export default function App() {
     // Fetch the token from  storage
     const bootstrapAsync = async () => {
       let userToken;
-      await SecureStore.setItemAsync("userToken", "");
+      // await SecureStore.setItemAsync("userToken", "");
 
       try {
         userToken = await SecureStore.getItemAsync("userToken");
@@ -114,7 +113,7 @@ export default function App() {
               <Stack.Screen name="Register" component={RegisterScreen} />
             </>
           ) : (
-            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Home" component={Home} initialParams={state} />
           )}
         </Stack.Navigator>
       </NavigationContainer>
