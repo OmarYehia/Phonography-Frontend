@@ -1,8 +1,10 @@
-import React from "react";
-import { Text, View } from "react-native";
+import React, { useContext } from "react";
+import { Text, View, Button } from "react-native";
 import { globalStyles } from "../styles/global";
+import { AuthContext } from "../context/AuthContext";
 
-export default function Home() {
+export default function Home({ route }) {
+  const { signOut } = useContext(AuthContext);
   return (
     <View
       style={{
@@ -10,7 +12,9 @@ export default function Home() {
         alignItems: "center",
         justifyContent: "center",
       }}>
-      <Text style={globalStyles.titleText}> Home Component </Text>
+      {console.log(route.params)}
+      <Text style={globalStyles.titleText}>token={route.params.userToken}</Text>
+      <Button title="sign out" onPress={signOut} />
     </View>
   );
 }

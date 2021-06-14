@@ -7,10 +7,11 @@ import { NavigationContainer } from "@react-navigation/native";
 import Home from "./screens/Home";
 import jwt_decode from "jwt-decode";
 import { AuthContextProvider } from "./context/AuthContext";
-import AuthTabNavigator from "./navigators/AuthTabNavigator";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
 import CompetitionNavigator from './routers/competitionStack'
+import PostForm from './components/Post/addPostForm'
+
 
 const Stack = createStackNavigator();
 
@@ -81,7 +82,7 @@ export default function App() {
     const bootstrapAsync = async () => {
       let userToken;
      // await SecureStore.setItemAsync("userToken", "");
-
+      
       try {
         userToken = await SecureStore.getItemAsync("userToken");
       } catch (error) {
@@ -115,8 +116,8 @@ export default function App() {
               <Stack.Screen name="Register" component={RegisterScreen} />
             </>
           ) : (
-           // <Stack.Screen name="Home" component={Home} />
-           <Stack.Screen name="Home" component={CompetitionNavigator} />
+            <Stack.Screen name="Home" component={Home} initialParams={state} />
+            //  <Stack.Screen name="Home" component={CompetitionNavigator} />
           )}
         </Stack.Navigator>
       </NavigationContainer>

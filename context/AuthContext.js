@@ -1,7 +1,6 @@
 import React, { createContext, useMemo } from "react";
 import { API_URL } from "../@env";
 import * as SecureStore from "expo-secure-store";
-import jwt_decode from "jwt-decode";
 
 const AuthContext = createContext();
 
