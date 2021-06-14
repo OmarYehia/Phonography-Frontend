@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet,Text, View, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet,Text, View, FlatList, TouchableOpacity, Modal, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { globalStyles } from '../../styles/global';
-import Card from '../../shared/card';
+import Card from '../../components/shared/card';
+import { API_URL } from "../../@env";
+import { MaterialIcons } from '@expo/vector-icons';
+import CompetitionForm from './CompetitionForm';
 
 
 
 export default function Competition({ navigation }){
     const [competition, setCompetition] = useState(null);
+    const [modalOpen, setModalOpen] =  useState(false);
 
     const pressHandler = (item) => {
         navigation.navigate('ContestDetails', item);
@@ -14,7 +18,7 @@ export default function Competition({ navigation }){
     
     useEffect(()=>{
         console.log("from useeffect")
-        fetch(`https://phonography-backend-os41.herokuapp.com/competition`)
+        fetch(`${API_URL}/competition`)
           .then(res => {
               if(res.ok) {
                   return res.json()
@@ -36,6 +40,28 @@ export default function Competition({ navigation }){
 
     return(
         <View style={globalStyles.container}>
+
+          <Modal visible={modalOpen} animationType='slide'>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.modalContent}>
+                    <MaterialIcons 
+                      name='close'
+                      size={24}
+                      style={{...styles.modalToggle, ...styles.modalClose}}
+                      onPress={() => setModalOpen(false)}
+                    />
+                    <CompetitionForm/>
+                </View>
+                
+            </TouchableWithoutFeedback>
+            </Modal>
+        
+            <MaterialIcons 
+                name='add'
+                size={24}
+                style={styles.modalToggle}
+                onPress={() => setModalOpen(true)}
+            />
             <FlatList
                data={competition}
                keyExtractor={(item) => item._id}
@@ -51,3 +77,22 @@ export default function Competition({ navigation }){
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    modalToggle: {
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: '#f2f2f2',
+      padding: 10,
+      borderRadius: 10,
+      alignSelf: 'center'
+    },
+    modalClose: {
+      marginTop: 20,
+      marginBottom: 0,
+    },
+    modalContent: {
+      flex: 1,
+    }
+  })
+  

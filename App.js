@@ -1,4 +1,3 @@
-import CompetitionNavigator from './routes/competitionStack'
 import "react-native-gesture-handler";
 import React, { useReducer, useEffect } from "react";
 import { useFonts } from "expo-font";
@@ -11,6 +10,7 @@ import { AuthContextProvider } from "./context/AuthContext";
 import AuthTabNavigator from "./navigators/AuthTabNavigator";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
+import CompetitionNavigator from './routers/competitionStack'
 
 const Stack = createStackNavigator();
 
@@ -80,7 +80,7 @@ export default function App() {
     // Fetch the token from  storage
     const bootstrapAsync = async () => {
       let userToken;
-      await SecureStore.setItemAsync("userToken", "");
+     // await SecureStore.setItemAsync("userToken", "");
 
       try {
         userToken = await SecureStore.getItemAsync("userToken");
