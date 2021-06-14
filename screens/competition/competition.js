@@ -8,7 +8,7 @@ import CompetitionForm from './CompetitionForm';
 
 
 
-export default function Competition({ navigation }){
+export default function Competition({ route, navigation }){
     const [competition, setCompetition] = useState(null);
     const [modalOpen, setModalOpen] =  useState(false);
 
@@ -17,7 +17,7 @@ export default function Competition({ navigation }){
     }
     
     useEffect(()=>{
-        console.log("from useeffect")
+      //  console.log(route.params.userToken)
         fetch(`${API_URL}/competition`)
           .then(res => {
               if(res.ok) {
@@ -50,7 +50,7 @@ export default function Competition({ navigation }){
                       style={{...styles.modalToggle, ...styles.modalClose}}
                       onPress={() => setModalOpen(false)}
                     />
-                    <CompetitionForm/>
+                    <CompetitionForm userToken={route.params.userToken} />
                 </View>
                 
             </TouchableWithoutFeedback>

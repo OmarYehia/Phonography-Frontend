@@ -9,7 +9,9 @@ import { AuthContext } from '../../context/AuthContext';
 //import DatePicker from 'react-native-date-picker';
 //import DateTimePicker from '@react-native-community/datetimepicker';
 import DatePicker from 'react-native-datepicker';
-import { Dropdown } from 'react-native-material-dropdown-v2';
+//import { Dropdown } from 'react-native-material-dropdown-v2';
+import { Picker } from '@react-native-picker/picker';
+
 
 const competitionSchema = yup.object({
     name: yup
@@ -25,18 +27,25 @@ const competitionSchema = yup.object({
        .min(
         yup.ref('startDate'),
         "end date can't be before start date"
-      )
+      ),
+      sponsor: yup
+      .string()
+      .required("Please choose a sponsor for the competition"),
+      prizes: yup
+             .string()
+             .required()
+      
      
   })
 
 
 
-  export default function CompetitionForm() {
-      const  userToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGJhMzY2MDAxNjY1MDQxZWM0NmJkZTUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2MjM1NDk3MjMsImV4cCI6MTYyMzYzNjEyM30.jGguxlQRLhCy83i73ntOBTKxB8AI_-Z3F9DOxUZikiE"
+  export default function CompetitionForm({userToken} ) {
+      const [sponsor, setSponsor] = useState(null);
       const [sponsors, setSponsors] = useState([]);
-      let userName = []
+      
       useEffect(()=>{
-        console.log("from useeffect")
+        console.log(userToken)
         fetch(`${API_URL}/users`)
           .then(res => {
               if(res.ok) {
@@ -48,18 +57,11 @@ const competitionSchema = yup.object({
               }
           })
           .then(data => { 
-             
-            data.data.users.forEach(user => {
-              userName.push(user.name);
-            });
-              setSponsors(data.data.users)
-              console.log(userName)
-             
-              
+              setSponsors(data.data.users) 
 
           })
           .catch(err => {
-              console.log(err)
+              console.log("errooor",err)
           })
     }, [])
 
@@ -85,8 +87,8 @@ const competitionSchema = yup.object({
      
     return(
         <View style={globalStyles.container}>
-          {/*  <Formik
-              initialValues= {{name: '', startDate:'', endDate:''}}
+           <Formik
+              initialValues= {{name: '', startDate:'', endDate:'', sponsor:'', prizes: ''}}
               validationSchema={ competitionSchema }
               onSubmit={async (values, actions) =>{
                    console.log(values);
@@ -152,12 +154,39 @@ const competitionSchema = yup.object({
                             
                         />
                         <Text style={globalStyles.errorText}>{ props.touched.endDate && props.errors.endDate }</Text>
-                        
+                        <Picker selectedValue={sponsor}
+                              style={{ height: 50, width: 200 }}
+                              mode="dropdown"
+                              onValueChange={(itemValue, itemIndex) => {
+                              props.setFieldValue('sponsor', itemValue)
+                              setSponsor(itemValue);
+                              
+                             
+                            }}
+                           
+                        >
+                          <Picker.item label="Select a sponsor" value="#" />
+                            {sponsors.length ? sponsors.map((each) => {
+                            return (
+                              <Picker.item key={each._id} label={each.name} value={each._id} />
+                            )
+                          }) : <Picker.item label="" value="" />}
+                        </Picker>
+                        <Text style={globalStyles.errorText}>{ props.touched.sponsor && props.errors.sponsor }</Text>
+
+                        <TextInput
+                         style={globalStyles.input}
+                         placeholder='Prizes'
+                         onChangeText={props.handleChange('prizes')}
+                         value={props.values.prizes}
+                         onBlur={props.handleBlur('prizes')}
+                      /> 
+                        <Text style={globalStyles.errorText}>{ props.touched.prizes && props.errors.prizes }</Text>
                         <SolidButton text='submit' onPress={props.handleSubmit}/>
                     </View> 
                 )}
-                </Formik> */}
-                <Dropdown label='Choose a sponsor' data={userName}/>  
+                </Formik> 
+               
                
         </View>
     )

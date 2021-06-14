@@ -9,7 +9,7 @@ import jwt_decode from "jwt-decode";
 import { AuthContextProvider } from "./context/AuthContext";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
-import CompetitionNavigator from './routers/competitionStack'
+import CompetitionStack from './routers/competitionStack'
 import PostForm from './components/Post/addPostForm'
 
 
@@ -116,8 +116,8 @@ export default function App() {
               <Stack.Screen name="Register" component={RegisterScreen} />
             </>
           ) : (
-            <Stack.Screen name="Home" component={Home} initialParams={state} />
-            //  <Stack.Screen name="Home" component={CompetitionNavigator} />
+           // <Stack.Screen name="Home" component={Home} initialParams={state} />
+            <Stack.Screen name="Home" component={CompetitionStack} initialParams={state}/>
           )}
         </Stack.Navigator>
       </NavigationContainer>
