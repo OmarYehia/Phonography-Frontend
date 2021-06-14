@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet,Text, View, FlatList, TouchableOpacity, Modal, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet,Text, View, FlatList, TouchableOpacity, Modal, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 import { globalStyles } from '../../styles/global';
 import Card from '../../components/shared/card';
 import { API_URL } from "../../@env";
@@ -8,13 +8,44 @@ import CompetitionForm from './CompetitionForm';
 
 
 
+
 export default function Competition({ route, navigation }){
     const [competition, setCompetition] = useState(null);
     const [modalOpen, setModalOpen] =  useState(false);
+    const userToken = route.params.userToken
 
     const pressHandler = (item) => {
         navigation.navigate('ContestDetails', item);
     }
+    const deleteHandler =  (item) => {
+        Alert.alert("Warning", `Are you sure you want to delete ${item.name} competition?`,[
+            {
+                text:"yes", onPress:async () => {
+                    
+                    try {
+                        const res = await fetch(`${API_URL}/competition/${item._id}`, {
+                          headers: { 
+                              "Content-Type": "application/json" ,
+                              "Authorization": `Bearer ${userToken}`
+                          },
+                          method: "DELETE",
+                        });
+                       
+                        const jsonRes = await res.json();
+                        console.log(jsonRes);
+                        return jsonRes;
+              
+                      } catch (error) {
+                          console.log(error)
+                        return error;
+                      }
+                }
+            },
+            {text: "No"}
+        ])
+       
+    }
+
     
     useEffect(()=>{
       //  console.log(route.params.userToken)
@@ -36,7 +67,7 @@ export default function Competition({ route, navigation }){
           .catch(err => {
               console.log(err)
           })
-    }, [])
+    }, [competition])
 
     return(
         <View style={globalStyles.container}>
@@ -67,8 +98,12 @@ export default function Competition({ route, navigation }){
                keyExtractor={(item) => item._id}
                renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => pressHandler(item)}>
-                    <Card>
-                    <Text style={globalStyles.titleText}>{item.name}</Text>
+                    <Card >
+                        <View style={styles.itemContent}>
+                          <Text style={globalStyles.titleText}>{item.name}</Text>
+                          <MaterialIcons name="delete" size={30} color="red" onPress={() => deleteHandler(item)} />
+                        </View>
+                    
                     </Card>
                    
                 </TouchableOpacity>
@@ -93,6 +128,10 @@ const styles = StyleSheet.create({
     },
     modalContent: {
       flex: 1,
+    },
+    itemContent: {
+        flexDirection: 'row',
+        justifyContent:"space-between"
     }
   })
   
