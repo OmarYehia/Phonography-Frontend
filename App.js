@@ -10,6 +10,9 @@ import jwt_decode from "jwt-decode";
 import { AuthContextProvider } from "./context/AuthContext";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
+import CompetitionStack from './routers/competitionStack'
+import PostForm from './components/Post/addPostForm'
+
 
 import UserProfile from "./screens/UserProfile";
 
@@ -82,8 +85,8 @@ export default function App() {
     // Fetch the token from  storage
     const bootstrapAsync = async () => {
       let userToken;
-      // await SecureStore.setItemAsync("userToken", "");
-
+     // await SecureStore.setItemAsync("userToken", "");
+      
       try {
         userToken = await SecureStore.getItemAsync("userToken");
       } catch (error) {
@@ -123,9 +126,11 @@ export default function App() {
                 component={UserProfile}
                 initialParams={{ token: state.userToken, userId: "60ba1bd5b691cc8163988d4c" }}
               />
-              <Stack.Screen name="Home" component={Home} initialParams={state} />
+              {/* <Stack.Screen name="Home" component={Home} initialParams={state} /> */}
+                {/* <Stack.Screen name="Home" component={CompetitionStack} />
+              <Stack.Screen name="Home" component={Home} initialParams={state} /> */}
+              <Stack.Screen name="Home" component={CompetitionStack} initialParams={state}/>
             </>
-            //  <Stack.Screen name="Home" component={CompetitionStack} />
           )}
         </Stack.Navigator>
       </NavigationContainer>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { globalStyles } from '../../styles/global';
-import Card from '../../shared/card';
+import Card from '../../components/shared/card';
 
 
 export default function CompetitionDetails({ route , navigation }) {
