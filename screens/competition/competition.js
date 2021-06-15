@@ -4,6 +4,7 @@ import { globalStyles } from '../../styles/global';
 import Card from '../../components/shared/card';
 import { API_URL } from "../../@env";
 import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import CompetitionForm from './CompetitionForm';
 
 
@@ -45,6 +46,31 @@ export default function Competition({ route, navigation }){
         ])
        
     }
+    const joinHandler = async (item) => {
+        try {
+            const res = await fetch(`${API_URL}/competition/${item._id}/competitor/join`, {
+              headers: { 
+                  "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${userToken}`
+              },
+              method: "PUT",
+            });
+           
+            const jsonRes = await res.json();
+            console.log(jsonRes);
+            return jsonRes;
+  
+          } catch (error) {
+              console.log(error)
+            return error;
+          }
+    }
+        
+                    
+                    
+            
+       
+    
 
     
     useEffect(()=>{
@@ -100,8 +126,12 @@ export default function Competition({ route, navigation }){
                 <TouchableOpacity onPress={() => pressHandler(item)}>
                     <Card >
                         <View style={styles.itemContent}>
-                          <Text style={globalStyles.titleText}>{item.name}</Text>
-                          <MaterialIcons name="delete" size={30} color="red" onPress={() => deleteHandler(item)} />
+                           <Text style={globalStyles.titleText}>{item.name}</Text>
+                            <View style={{flexDirection:'row'}}>
+                            <Ionicons name="ios-enter-outline" size={30} color="blue" onPress={() => joinHandler(item)}/>
+                           <MaterialIcons name="delete" size={30} color="red" onPress={() => deleteHandler(item)} />
+                        </View>
+                        
                         </View>
                     
                     </Card>
