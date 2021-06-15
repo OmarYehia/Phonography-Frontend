@@ -1,5 +1,5 @@
-import CompetitionNavigator from "./routes/competitionStack";
 import "react-native-gesture-handler";
+import CompetitionStack from "./routes/competitionStack";
 import React, { useReducer, useEffect } from "react";
 import { useFonts } from "expo-font";
 import * as SecureStore from "expo-secure-store";
@@ -11,6 +11,8 @@ import { AuthContextProvider } from "./context/AuthContext";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
 
+import UserProfile from "./screens/UserProfile";
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -20,6 +22,7 @@ export default function App() {
     "nunito-bold": require("./assets/fonts/Nunito-Bold.ttf"),
     "nunito-black": require("./assets/fonts/Nunito-Black.ttf"),
     "nunito-extraBold": require("./assets/fonts/Nunito-ExtraBold.ttf"),
+    "nunito-light": require("./assets/fonts/Nunito-Light.ttf"),
   });
 
   /* useReducer is similiar to useState, it takes two arguments(reducer, initialState), it changes the
@@ -114,8 +117,15 @@ export default function App() {
               <Stack.Screen name="Register" component={RegisterScreen} />
             </>
           ) : (
-            <Stack.Screen name="Home" component={Home} initialParams={state} />
-            //  <Stack.Screen name="Home" component={CompetitionNavigator} />
+            <>
+              <Stack.Screen
+                name="User Profile"
+                component={UserProfile}
+                initialParams={{ token: state.userToken, userId: "60ba1bd5b691cc8163988d4c" }}
+              />
+              <Stack.Screen name="Home" component={Home} initialParams={state} />
+            </>
+            //  <Stack.Screen name="Home" component={CompetitionStack} />
           )}
         </Stack.Navigator>
       </NavigationContainer>

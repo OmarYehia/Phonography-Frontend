@@ -7,6 +7,7 @@ export default function SolidButton({
   width = "100%",
   color = "#f01d71",
   borderRadius = 16,
+  fontColor = "white",
 }) {
   const styles = StyleSheet.create({
     button: {
@@ -17,10 +18,10 @@ export default function SolidButton({
       backgroundColor: color,
       width: width,
       alignSelf: "center",
-      elevation: 3,
+      elevation: 2,
     },
     buttonText: {
-      color: "white",
+      color: fontColor,
       textTransform: "capitalize",
       fontSize: 16,
       textAlign: "center",
