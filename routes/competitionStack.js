@@ -11,7 +11,7 @@ export default function CompetitionStack({route}) {
     
     <Stack.Navigator>
       <Stack.Screen name="Contests" component={Competition} initialParams={route.params} />
-      <Stack.Screen name="ContestDetails" component={CompetitionDetails } />
+      <Stack.Screen name="ContestDetails" component={CompetitionDetails } initialParams={route.params}/>
     </Stack.Navigator>
   );
 }
