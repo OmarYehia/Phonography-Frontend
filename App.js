@@ -1,5 +1,4 @@
 import "react-native-gesture-handler";
-import CompetitionStack from "./routes/competitionStack";
 import React, { useReducer, useEffect } from "react";
 import { useFonts } from "expo-font";
 import * as SecureStore from "expo-secure-store";
@@ -10,7 +9,7 @@ import jwt_decode from "jwt-decode";
 import { AuthContextProvider } from "./context/AuthContext";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
-import CompetitionStack from './routers/competitionStack'
+import CompetitionStack from "./routes/competitionStack";
 import PostForm from './components/Post/addPostForm'
 
 
