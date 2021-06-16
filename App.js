@@ -84,7 +84,7 @@ export default function App() {
     // Fetch the token from  storage
     const bootstrapAsync = async () => {
       let userToken;
-     // await SecureStore.setItemAsync("userToken", "");
+      await SecureStore.setItemAsync("userToken", "");
       
       try {
         userToken = await SecureStore.getItemAsync("userToken");
@@ -120,10 +120,10 @@ export default function App() {
             </>
           ) : (
             <>
-              <Stack.Screen
+             {/* <Stack.Screen
                 name="User Profile"
                 component={UserProfile}
-                initialParams={{ token: state.userToken, userId: "60ba1bd5b691cc8163988d4c" }}
+                initialParams={{ token: state.userToken, userId: "60ba1bd5b691cc8163988d4c" }}*}
               />
               {/* <Stack.Screen name="Home" component={Home} initialParams={state} /> */}
                 {/* <Stack.Screen name="Home" component={CompetitionStack} />

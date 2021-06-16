@@ -6,6 +6,7 @@ import { API_URL } from "../../@env";
 import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import CompetitionForm from './CompetitionForm';
+import jwt_decode from "jwt-decode";
 
 
 
@@ -15,6 +16,8 @@ export default function Competition({ route, navigation }){
     const [modalOpen, setModalOpen] =  useState(false);
     const [flag, setFlag] = useState(false);
     const [competition, setCompetition] = useState(null);
+    const [currentUserRole, setCurrentUserRole] = useState(null);
+    
 
     const userToken = route.params.userToken
 
@@ -81,7 +84,11 @@ export default function Competition({ route, navigation }){
 
     
     useEffect(()=>{
-      //  console.log(route.params.userToken)
+      const decodedToken = jwt_decode(userToken);
+      const currentUser = decodedToken.role;
+      setCurrentUserRole(currentUser);
+
+      // get all competitions
         fetch(`${API_URL}/competition`)
           .then(res => {
               if(res.ok) {
@@ -119,13 +126,14 @@ export default function Competition({ route, navigation }){
                 
             </TouchableWithoutFeedback>
             </Modal>
-        
+           {currentUserRole === 'admin'?
             <MaterialIcons 
                 name='add'
                 size={24}
                 style={styles.modalToggle}
                 onPress={() => setModalOpen(true)}
-            />
+            />: null}
+           
             <FlatList
                data={competitions}
                keyExtractor={(item) => item._id}
@@ -134,12 +142,15 @@ export default function Competition({ route, navigation }){
                     <Card >
                         <View style={styles.itemContent}>
                            <Text style={globalStyles.titleText}>{item.name}</Text>
-                            <View style={{flexDirection:'row'}}>
-                           {/* <Ionicons name="ios-enter-outline" size={30} color="blue" onPress={() => joinHandler(item)}/> */}
-                            <MaterialIcons name="edit" size={30} color="black" onPress={() => editHandler(item)} />
-                           <MaterialIcons name="delete" size={30} color="red" onPress={() => deleteHandler(item)} />
-                        </View>
-                        
+                           {currentUserRole === 'admin'?
+                                              <View style={{flexDirection:'row'}}>
+                                                {/* <Ionicons name="ios-enter-outline" size={30} color="blue" onPress={() => joinHandler(item)}/> */}
+                          
+                                               <MaterialIcons name="edit" size={30} color="black" onPress={() => editHandler(item)} />
+                                               <MaterialIcons name="delete" size={30} color="red" onPress={() => deleteHandler(item)} />
+                          
+                                              </View>
+                            :null }
                         </View>
                     
                     </Card>
