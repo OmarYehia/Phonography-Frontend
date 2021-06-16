@@ -11,8 +11,11 @@ import CompetitionForm from './CompetitionForm';
 
 
 export default function Competition({ route, navigation }){
-    const [competition, setCompetition] = useState(null);
+    const [competitions, setCompetitions] = useState(null);
     const [modalOpen, setModalOpen] =  useState(false);
+    const [flag, setFlag] = useState(false);
+    const [competition, setCompetition] = useState(null);
+
     const userToken = route.params.userToken
 
     const pressHandler = (item) => {
@@ -66,7 +69,11 @@ export default function Competition({ route, navigation }){
           }
     }
         
-                    
+    const editHandler = (item) => {
+      setFlag(true);
+      setCompetition(item);
+      setModalOpen(true);
+  }                   
                     
             
        
@@ -86,14 +93,14 @@ export default function Competition({ route, navigation }){
               }
           })
           .then(data => {
-              setCompetition(data.data.competitions)
+              setCompetitions(data.data.competitions)
               
 
           })
           .catch(err => {
               console.log(err)
           })
-    }, [competition])
+    }, [competitions])
 
     return(
         <View style={globalStyles.container}>
@@ -105,9 +112,9 @@ export default function Competition({ route, navigation }){
                       name='close'
                       size={24}
                       style={{...styles.modalToggle, ...styles.modalClose}}
-                      onPress={() => setModalOpen(false)}
+                      onPress={() => {setModalOpen(false); setFlag(false); setCompetition(null)}}
                     />
-                    <CompetitionForm userToken={route.params.userToken} />
+                    <CompetitionForm userToken={route.params.userToken} flag={flag} competition={competition} />
                 </View>
                 
             </TouchableWithoutFeedback>
@@ -120,7 +127,7 @@ export default function Competition({ route, navigation }){
                 onPress={() => setModalOpen(true)}
             />
             <FlatList
-               data={competition}
+               data={competitions}
                keyExtractor={(item) => item._id}
                renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => pressHandler(item)}>
@@ -128,7 +135,8 @@ export default function Competition({ route, navigation }){
                         <View style={styles.itemContent}>
                            <Text style={globalStyles.titleText}>{item.name}</Text>
                             <View style={{flexDirection:'row'}}>
-                            <Ionicons name="ios-enter-outline" size={30} color="blue" onPress={() => joinHandler(item)}/>
+                           {/* <Ionicons name="ios-enter-outline" size={30} color="blue" onPress={() => joinHandler(item)}/> */}
+                            <MaterialIcons name="edit" size={30} color="black" onPress={() => editHandler(item)} />
                            <MaterialIcons name="delete" size={30} color="red" onPress={() => deleteHandler(item)} />
                         </View>
                         

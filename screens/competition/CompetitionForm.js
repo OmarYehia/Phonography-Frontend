@@ -11,6 +11,9 @@ import { AuthContext } from '../../context/AuthContext';
 import DatePicker from 'react-native-datepicker';
 //import { Dropdown } from 'react-native-material-dropdown-v2';
 import { Picker } from '@react-native-picker/picker';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 
 const competitionSchema = yup.object({
@@ -40,12 +43,24 @@ const competitionSchema = yup.object({
 
 
 
-  export default function CompetitionForm({userToken} ) {
+  export default function CompetitionForm({userToken, flag, competition} ) {
       const [sponsor, setSponsor] = useState(null);
       const [sponsors, setSponsors] = useState([]);
+      const [itemData, setItemData] = useState(flag ?
+                                                  { name : competition.name,
+                                                    startDate : competition.startDate,
+                                                    endDate : competition.endDate,
+                                                    sponsor : competition.sponsor.name,
+                                                    prizes : competition.prizes[0]
+                                                  } : {
+                                                    name : '',
+                                                    startDate : '',
+                                                    endDate : '',
+                                                    sponsor : '',
+                                                    prizes : ''
+                                                  })
       
       useEffect(()=>{
-        console.log(userToken)
         fetch(`${API_URL}/users`)
           .then(res => {
               if(res.ok) {
@@ -84,16 +99,43 @@ const competitionSchema = yup.object({
           return error;
         }
     }
+    const editCompetition = async (data) => {
+      try {
+         console.log(data);
+        const res = await fetch(`${API_URL}/competition/${competition._id}`, {
+          headers: { 
+              "Content-Type": "application/json" ,
+              "Authorization": `Bearer ${userToken}`
+          },
+          method: "PUT",
+          body: JSON.stringify(data),
+        });
+       
+        const jsonRes = await res.json();
+        console.log("json request",jsonRes);
+        return jsonRes;
+
+      } catch (error) {
+        return error;
+      }
+  }
      
     return(
         <View style={globalStyles.container}>
            <Formik
-              initialValues= {{name: '', startDate:'', endDate:'', sponsor:'', prizes: ''}}
+              initialValues= {itemData}
               validationSchema={ competitionSchema }
               onSubmit={async (values, actions) =>{
-                   console.log(values);
                    actions.resetForm();
-                  const res = await addCompetition(values);
+                   console.log(values)
+                   let res;
+                   if(!flag) {
+                     res = await addCompetition(values);
+                   }
+                   else if(flag) {
+                      res = await editCompetition(values)
+                   }
+                   console.log(res);
                   if (!res.success) {
                     let message = "";
                     if (res.errors.name) {
@@ -111,7 +153,7 @@ const competitionSchema = yup.object({
                     if (res.errors.prizes) {
                       message += `${res.errors.prizes}`;
                     }
-                    Alert.alert("These errors occured while trying to create the competition:", message, [
+                    Alert.alert("These errors occured while trying to create the competition:",message, [
                       { text: "Try again" },
                     ]);
                   }
@@ -182,7 +224,8 @@ const competitionSchema = yup.object({
                          onBlur={props.handleBlur('prizes')}
                       /> 
                         <Text style={globalStyles.errorText}>{ props.touched.prizes && props.errors.prizes }</Text>
-                        <SolidButton text='submit' onPress={props.handleSubmit}/>
+                        { !flag ?  <SolidButton text='Add Contest' onPress={props.handleSubmit}/> :<SolidButton text='Edit Contest' onPress={props.handleSubmit}/>}
+                       
                     </View> 
                 )}
                 </Formik> 
