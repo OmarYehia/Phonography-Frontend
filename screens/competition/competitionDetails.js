@@ -9,7 +9,7 @@ import jwt_decode from "jwt-decode";
 import Spinner from "react-native-loading-spinner-overlay";
 
 
-export default function CompetitionDetails({ route }) {
+export default function CompetitionDetails({ route, navigation }) {
     const [competitors, setCompetitors] = useState(null);
     const [isJoined, setIsJoined] = useState();
     const [currentUserId, setCurrentUserId] = useState(null);
@@ -17,6 +17,10 @@ export default function CompetitionDetails({ route }) {
 
     const userToken = route.params.userToken
 
+
+    const pressHandler = (competition) => {
+        navigation.navigate('Competitors', competition);
+    }
     const joinHandler = async () => {
         try {
             const res = await fetch(`${API_URL}/competition/${route.params._id}/competitor/join`, {
@@ -68,8 +72,19 @@ export default function CompetitionDetails({ route }) {
         const decodedToken = jwt_decode(userToken);
         const currentUser = decodedToken.userId;
         setCurrentUserId(currentUser);
+        setCompetitors(route.params.competitors);
+        if(currentUserId){
+            setLoading(false);
+            competitors.forEach((competitor) => {
+                if(currentUserId === competitor._id){
+                    setIsJoined(true)
+                } else{
+                    setIsJoined(false)
+                }
+            });    
+          }    
        
-        fetch(`${API_URL}/competition/${route.params._id}/competitors`)
+       /* fetch(`${API_URL}/competition/${route.params._id}/competitors`)
           .then(res => {
               if(res.ok) {
                   return res.json()
@@ -95,7 +110,8 @@ export default function CompetitionDetails({ route }) {
           })
           .catch(err => {
               console.log(err)
-          })
+          })*/
+
     }, [competitors, isJoined])
 
         
@@ -116,6 +132,10 @@ export default function CompetitionDetails({ route }) {
                 <View style={{...styles.items,...styles.date}}>
                     <Text style={globalStyles.normalText}>From: {route.params.startDate}</Text>
                     <Text style={globalStyles.normalText}>To: {route.params.endDate}</Text>
+                </View>
+                <View style={styles.items}>
+                    <Text style={globalStyles.normalText}>Competitors   </Text>
+                    <Ionicons name="people-outline" size={30} color="black"onPress={() => pressHandler(route.params)} />
                 </View>
                 {!isJoined ?
                         <View style={styles.items}>
