@@ -35,8 +35,12 @@ class addPostForm extends Component {
                 'Authorization': `Bearer ${TOKEN} `
             }
         })
-            .then(response => response.json())
+            .then(response => {
+                console.log("inside 1");
+                response.json()
+            })
             .then(result => {
+                console.log("inside");
                 this.setState({
                     categories: result.data.categories
                 })
@@ -59,13 +63,6 @@ class addPostForm extends Component {
             console.log(result);
             this.setState({ image: {uri: result.uri, name: name, type: `image/${extension}`} });
         }
-        // let options = {
-
-        // }
-        // launchImageLibrary(options, (response) => {
-        //     if (response)
-        //         console.log(response);
-        // })
 
     }
     takePhoto = async () => {
@@ -93,12 +90,6 @@ class addPostForm extends Component {
         );
         myForm.append('caption', this.state.caption);
         myForm.append('category', this.state.category);
-
-        let body = {
-            caption: this.state.caption,
-            category: this.state.category,
-            postImage: this.state.image.base64
-        }
 
         console.log("before fetch");
         fetch(`${BACKEND_URL}/posts`, {
