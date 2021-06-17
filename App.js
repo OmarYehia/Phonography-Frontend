@@ -1,19 +1,15 @@
 import "react-native-gesture-handler";
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer, useEffect, useState } from "react";
 import { useFonts } from "expo-font";
 import * as SecureStore from "expo-secure-store";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
-import Home from "./screens/Home";
 import jwt_decode from "jwt-decode";
 import { AuthContextProvider } from "./context/AuthContext";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
-import CompetitionStack from "./routes/competitionStack";
-import PostForm from './components/Post/addPostForm'
 
-
-import UserProfile from "./screens/UserProfile";
+import MainNavigator from "./routes/mainTabNavigator";
 
 const Stack = createStackNavigator();
 
@@ -26,6 +22,7 @@ export default function App() {
     "nunito-extraBold": require("./assets/fonts/Nunito-ExtraBold.ttf"),
     "nunito-light": require("./assets/fonts/Nunito-Light.ttf"),
   });
+  const [userId, setUserId] = useState(null);
 
   /* useReducer is similiar to useState, it takes two arguments(reducer, initialState), it changes the
      state depending on the input type given to the dispatch() function.
@@ -69,6 +66,7 @@ export default function App() {
 
     const decodedToken = jwt_decode(token);
     const currentDate = new Date();
+    setUserId(decodedToken.userId);
 
     if (decodedToken.exp * 1000 < currentDate.getTime()) {
       // Token expired
@@ -84,8 +82,8 @@ export default function App() {
     // Fetch the token from  storage
     const bootstrapAsync = async () => {
       let userToken;
-     // await SecureStore.setItemAsync("userToken", "");
-      
+      // await SecureStore.setItemAsync("userToken", "");
+
       try {
         userToken = await SecureStore.getItemAsync("userToken");
       } catch (error) {
@@ -119,17 +117,11 @@ export default function App() {
               <Stack.Screen name="Register" component={RegisterScreen} />
             </>
           ) : (
-            <>
-             {/* <Stack.Screen
-                name="User Profile"
-                component={UserProfile}
-                initialParams={{ token: state.userToken, userId: "60ba1bd5b691cc8163988d4c" }}*}
-              />
-              {/* <Stack.Screen name="Home" component={Home} initialParams={state} /> */}
-                {/* <Stack.Screen name="Home" component={CompetitionStack} />
-              <Stack.Screen name="Home" component={Home} initialParams={state} /> */}
-              <Stack.Screen name="Home" component={CompetitionStack} initialParams={state}/>
-            </>
+            <Stack.Screen
+              name="main"
+              component={MainNavigator}
+              initialParams={{ ...state, userId }}
+            />
           )}
         </Stack.Navigator>
       </NavigationContainer>

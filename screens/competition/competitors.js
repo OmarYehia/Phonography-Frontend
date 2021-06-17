@@ -10,8 +10,6 @@ import jwt_decode from "jwt-decode";
 
 export default function Competitor({ route }){
 
-    console.log(route.params.competitors[0].name)
-
     return(
         <View>
             <FlatList
