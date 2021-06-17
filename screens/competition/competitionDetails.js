@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { globalStyles } from '../../styles/global';
 import Card from '../../components/shared/card';
 import { Ionicons } from '@expo/vector-icons';
 import { API_URL } from "../../@env";
 import SolidButton from '../../components/shared/SolidButton';
+import jwt_decode from "jwt-decode";
+import Spinner from "react-native-loading-spinner-overlay";
 
 
 export default function CompetitionDetails({ route }) {
-    const [message, setMessage] = useState(null);
+    const [competitors, setCompetitors] = useState(null);
+    const [isJoined, setIsJoined] = useState();
+    const [currentUserId, setCurrentUserId] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const userToken = route.params.userToken
 
@@ -23,8 +28,12 @@ export default function CompetitionDetails({ route }) {
             });
            
             const jsonRes = await res.json();
-            console.log(jsonRes);
-            setMessage(jsonRes.data.message)
+            if(jsonRes.Success){
+                setIsJoined(true);
+                
+            }
+           // console.log("heey",isJoined)
+           // console.log(jsonRes);
             return jsonRes;
   
           } catch (error) {
@@ -43,7 +52,11 @@ export default function CompetitionDetails({ route }) {
             });
            
             const jsonRes = await res.json();
-            console.log(jsonRes);
+            if(jsonRes.Success){
+                setIsJoined(false);
+             //   console.log(isJoined);
+            }
+           // console.log(jsonRes);
             return jsonRes;
   
           } catch (error) {
@@ -51,10 +64,45 @@ export default function CompetitionDetails({ route }) {
             return error;
           }
     }
+    useEffect(()=>{
+        const decodedToken = jwt_decode(userToken);
+        const currentUser = decodedToken.userId;
+        setCurrentUserId(currentUser);
+       
+        fetch(`${API_URL}/competition/${route.params._id}/competitors`)
+          .then(res => {
+              if(res.ok) {
+                  return res.json()
+              } else {
+                  if (res.status === 404){
+                      throw Error("Notfound")
+                  }
+              }
+          })
+          .then(data => {
+              setCompetitors(data.data.competitors);
+              if(currentUserId){
+                setLoading(false);
+                competitors.forEach((competitor) => {
+                    
+                    if(currentUserId === competitor._id){
+                        setIsJoined(true)
+                    } else{
+                        setIsJoined(false)
+                    }
+                });    
+              }    
+          })
+          .catch(err => {
+              console.log(err)
+          })
+    }, [competitors, isJoined])
+
+        
 
     return (
         <View style={globalStyles}>
-            <Text>{message}</Text>
+             <Spinner visible={loading} />
             <Card>
                 <Text style={{...globalStyles.titleText, ...styles.nameText}}>{route.params.name}</Text>
                 <View style={styles.items}>
@@ -69,12 +117,16 @@ export default function CompetitionDetails({ route }) {
                     <Text style={globalStyles.normalText}>From: {route.params.startDate}</Text>
                     <Text style={globalStyles.normalText}>To: {route.params.endDate}</Text>
                 </View>
-                <View style={styles.items}>
-                     <SolidButton text="Join This Context" onPress={() => joinHandler()}/>
-                </View>
-                <View style={styles.items}>
-                     <SolidButton text="Disjoin This Context" onPress={() => disjoinHandler()}/>
-                </View>
+                {!isJoined ?
+                        <View style={styles.items}>
+                          <SolidButton text="Join This Context" onPress={() => joinHandler()}/>
+                        </View> :
+                        <View style={styles.items}>
+                           <SolidButton text="Disjoin This Context" onPress={() => disjoinHandler()}/>
+                        </View>
+                         }
+                
+                
                 
             </Card>
         </View>
