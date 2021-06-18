@@ -1,11 +1,13 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import CompetitionStack from "../routes/competitionStack";
 import PostForm from "../components/Post/addPostForm";
 import Home from "../screens/Home";
 import UserProfile from "../screens/UserProfile";
 import React from "react";
+import CategoriesScreen from "../screens/CategoriesScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -22,6 +24,8 @@ export default function MainNavigator({ route }) {
           } else if (route.name === "User Profile") {
             iconName = focused ? "user-circle" : "user-circle-o";
             return <FontAwesome name={iconName} size={size} color={color} />;
+          } else if (route.name === "Categories") {
+            return <MaterialIcons name="category" size={size} color={color} />;
           }
         },
       })}
@@ -30,6 +34,7 @@ export default function MainNavigator({ route }) {
         inactiveTintColor: "gray",
       }}>
       <Tab.Screen name="Home" component={CompetitionStack} initialParams={state} />
+      <Tab.Screen name="Categories" component={CategoriesScreen} />
       <Tab.Screen
         name="User Profile"
         component={UserProfile}
