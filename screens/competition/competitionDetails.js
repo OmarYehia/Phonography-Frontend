@@ -19,8 +19,8 @@ export default function CompetitionDetails({ route, navigation }) {
 
   const userToken = route.params.userToken;
 
-    const pressHandler = (competitors) => {
-        navigation.navigate('Competitors', competitors);
+    const pressHandler = (competitionId,currentUserId, userToken) => {
+        navigation.navigate('Competitors', {competitionId, currentUserId, userToken});
     }
     const joinHandler = async () => {
         try {
@@ -123,11 +123,11 @@ export default function CompetitionDetails({ route, navigation }) {
         </View>
         <View style={styles.items}>
                 <Text style={globalStyles.normalText}>Competitors   </Text>
-                <Ionicons name="people-outline" size={30} color="black"onPress={() => pressHandler(competitors)} />
+                <Ionicons name="people-outline" size={30} color="black"onPress={() => pressHandler(route.params._id,currentUserId,userToken)} />
         </View>
         {!isJoined ? (
           <View style={styles.items}>
-            <SolidButton text="Join This Context" onPress={() => joinHandler()} />
+            <SolidButton text="Join This Context"  onPress={() => joinHandler()} />
           </View>
         ) : (
           <View style={styles.items}>
