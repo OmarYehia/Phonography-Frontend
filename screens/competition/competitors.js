@@ -8,7 +8,7 @@ import SolidButton from '../../components/shared/SolidButton';
 import jwt_decode from "jwt-decode";
 
 
-export default function Competitor({ route}){
+export default function Competitor({ route, navigation}){
    const [competitors, setCompetitors] = useState(null);
    const [isFriend, setIsFriend] = useState();
    const [changed, setChanged] = useState(false);
@@ -16,6 +16,9 @@ export default function Competitor({ route}){
    const userToken = route.params.userToken;
    
 
+   const pressHandler = (userId) => {
+       navigation.navigate("User Profile",{userId});
+   }
    const followHandler = async (id) => {
     try {
       const res = await fetch(`${API_URL}/friendships/${id}`, {
@@ -95,7 +98,7 @@ export default function Competitor({ route}){
                data={competitors}
                keyExtractor={(item) => item._id}
                renderItem={({ item }) => (
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => pressHandler(item._id)}>
                     <Card >
                         <View style={styles.itemContent}>
                            <Text style={globalStyles.titleText}>{item.name}</Text>
