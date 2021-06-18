@@ -10,10 +10,12 @@ import jwt_decode from "jwt-decode";
 
 export default function Competitor({ route }){
 
+    console.log(route.params)
+
     return(
         <View>
             <FlatList
-               data={route.params.competitors}
+               data={route.params}
                keyExtractor={(item) => item._id}
                renderItem={({ item }) => (
                 <TouchableOpacity>

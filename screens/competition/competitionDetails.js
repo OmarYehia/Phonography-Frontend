@@ -14,11 +14,13 @@ export default function CompetitionDetails({ route, navigation }) {
   const [isJoined, setIsJoined] = useState();
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [changed, setChanged] = useState(false);
+
 
   const userToken = route.params.userToken;
 
-    const pressHandler = (competition) => {
-        navigation.navigate('Competitors', competition);
+    const pressHandler = (competitors) => {
+        navigation.navigate('Competitors', competitors);
     }
     const joinHandler = async () => {
         try {
@@ -33,6 +35,7 @@ export default function CompetitionDetails({ route, navigation }) {
             const jsonRes = await res.json();
             if(jsonRes.Success){
                 setIsJoined(true);
+                setChanged(!changed);
                 
             }
            // console.log("heey",isJoined)
@@ -57,6 +60,7 @@ export default function CompetitionDetails({ route, navigation }) {
       const jsonRes = await res.json();
       if (jsonRes.Success) {
         setIsJoined(false);
+        setChanged(!changed)
         //   console.log(isJoined);
       }
       // console.log(jsonRes);
@@ -71,18 +75,34 @@ export default function CompetitionDetails({ route, navigation }) {
     const currentUser = decodedToken.userId;
     setCurrentUserId(currentUser);
 
-    setCompetitors(route.params.competitors);
-    if (currentUser) {
-      setLoading(false);
-      route.params.competitors.forEach((competitor) => {
-        if (currentUser === competitor._id) {
-          setIsJoined(true);
-        } else {
-          setIsJoined(false);
-        }
-      });
-    }
-  }, []);
+    fetch(`${API_URL}/competition/${route.params._id}/competitors`)
+          .then(res => {
+              if(res.ok) {
+                  return res.json()
+              } else {
+                  if (res.status === 404){
+                      throw Error("Notfound")
+                  }
+              }
+          })
+          .then(data => {
+              setCompetitors(data.data.competitors);
+              if(currentUser){
+                setLoading(false);
+                data.data.competitors.forEach((competitor) => {
+
+                    if(currentUser === competitor._id){
+                        setIsJoined(true)
+                    } else{
+                        setIsJoined(false)
+                    }
+                });    
+              }    
+          })
+          .catch(err => {
+              console.log(err)
+          })
+  }, [changed]);
 
   return (
     <View style={globalStyles}>
@@ -103,7 +123,7 @@ export default function CompetitionDetails({ route, navigation }) {
         </View>
         <View style={styles.items}>
                 <Text style={globalStyles.normalText}>Competitors   </Text>
-                <Ionicons name="people-outline" size={30} color="black"onPress={() => pressHandler(route.params)} />
+                <Ionicons name="people-outline" size={30} color="black"onPress={() => pressHandler(competitors)} />
         </View>
         {!isJoined ? (
           <View style={styles.items}>
