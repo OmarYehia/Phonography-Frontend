@@ -15,7 +15,7 @@ export const globalStyles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     marginVertical: 3,
-    lineHeight: 20,
+    // lineHeight: 20,
   },
   textLink: {
     fontFamily: "nunito-regular",

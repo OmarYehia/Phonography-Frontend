@@ -58,7 +58,7 @@ export default function RegisterScreen({ navigation }) {
             phone_number: "",
             country: "",
           }}
-          // validationSchema={registerSchema}
+          validationSchema={registerSchema}
           onSubmit={async (values, actions) => {
             setLoading(true);
             const res = await signUp(values);

@@ -61,7 +61,7 @@ class addPostForm extends Component {
             let name = res[res.length - 1]
             let extension = name.split('.')[1]
             console.log(result);
-            this.setState({ image: {uri: result.uri, name: name, type: `image/${extension}`} });
+            this.setState({ image: { uri: result.uri, name: name, type: `image/${extension}` } });
         }
 
     }
@@ -122,12 +122,12 @@ class addPostForm extends Component {
                         console.log(this.state.category);
                     }}
                 >
-                    <Picker.item label="Select category" value="#" />
-                    {this.state.categories.length ? this.state.categories.map((each) => {
+                    <Picker.Item label="Select category" value="#" />
+                    {this.state.categories.length && this.state.categories.map((each) => {
                         return (
-                            <Picker.item key={each._id} label={each.name} value={each._id} />
+                            <Picker.Item key={each._id} label={each.name} value={each._id} />
                         )
-                    }) : <Picker.item label="" value="" />}
+                    })}
                 </Picker>
                 <Button title="Pick an image from camera roll" onPress={this.pickImage} />
                 <Text>Or</Text>

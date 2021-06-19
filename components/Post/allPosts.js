@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View,ScrollView, TextInput, Image, Button, Platform, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, ActivityIndicator, View, ScrollView, TextInput, Image, Button, Platform, TouchableOpacity, Alert } from 'react-native';
 import { BACKEND_URL } from '../../ENV'
 import { API_URL } from '../../@env'
 import { TOKEN } from '../../ENV'
@@ -10,9 +10,11 @@ export class allPosts extends Component {
         super();
         this.state = {
             posts: [],
+            loading: true,
         }
     }
     componentDidMount() {
+        this.state.loading = true;
         fetch(`${BACKEND_URL}/posts`, {
             headers: {
                 'content-type': 'application/json',
@@ -20,14 +22,20 @@ export class allPosts extends Component {
             }
         }).then(response => response.json())
             .then(result => {
-                console.log(result);
-                this.setState({ posts: result.data.post })
+                if (result.success) {
+                    this.setState({ loading: false, posts: result.data.post })
+                } else {
+                    Alert.alert(result.errors.message)
+                }
+
             })
     }
     render() {
         return (
-            <ScrollView style={syles.postContainer}>
-                {this.state.posts.length ? this.state.posts.map(post => <Post  key={post._id} post={post} />) : <Text>No Available Posts to show.</Text>}
+            <ScrollView >
+                {this.state.loading ?
+                    <Text>Loading ...</Text> :
+                    ((this.state.posts.length) ? this.state.posts.map(post => <Post key={post._id} post={post} />) : <Text>No Available Posts to show.</Text>)}
             </ScrollView>
         )
     }
