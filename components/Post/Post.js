@@ -127,7 +127,7 @@ export class Post extends Component {
         this.setState({ onePostSelected: !this.state.onePostSelected })
     }
     pressHandler = (item) => {
-        this.props.navigation.navigate('User Profile', item);
+        this.props.navigation.navigate('UserProfile', item);
     }
     deleteComment = (id) => {
         fetch(`${BACKEND_URL}/comment/${id}`, {
@@ -169,7 +169,7 @@ export class Post extends Component {
                     <Text style={{ margin: 10, }}>
                         {this.state.post.caption}
                     </Text>
-                    <Text style={{ margin: 10, color: 'blue', textAlign: 'right' }}>
+                    <Text style={{ margin: 10, color: '#f01d71', textAlign: 'right' }}>
                         #{this.state.post.category.name}
                     </Text>
 
@@ -179,10 +179,10 @@ export class Post extends Component {
                     <Card.Divider />
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                         <TouchableOpacity onPress={() => this.likePost()} style={{ flex: 1, borderRightWidth: 1, alignItems: 'center' }}>
-                            {this.state.liked ? <AntDesign name="heart" size={20} color="blue" /> : <AntDesign name="hearto" size={20} color="blue" />}
+                            {this.state.liked ? <AntDesign name="heart" size={20} color="#f01d71" /> : <AntDesign name="hearto" size={20} color="#f01d71" />}
                         </TouchableOpacity>
                         <TouchableOpacity style={{ flex: 1, alignItems: 'center' }} onPress={() => this.setState({ disabled: !this.state.disabled, comment: null })}>
-                            <FontAwesome name="comment-o" size={20} color="blue" />
+                            <FontAwesome name="comment-o" size={20} color="#f01d71" />
                         </TouchableOpacity>
                     </View>
                     {!this.state.disabled && <Input
@@ -237,7 +237,7 @@ export class Post extends Component {
                                 <Text style={{ margin: 10 }}>
                                     {this.state.post.caption}
                                 </Text>
-                                <Text style={{ margin: 10, color: 'blue' }}>
+                                <Text style={{ margin: 10, color: '#f01d71' }}>
                                     #{this.state.post.category.name}
                                 </Text>
                                 <Text style={{ margin: 10 }} onPress={() => this.toggleOnePostSelected()}>
@@ -245,7 +245,7 @@ export class Post extends Component {
                                 </Text>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                                     <TouchableOpacity onPress={() => this.likePost()} style={{ flex: 1, alignItems: 'center' }}>
-                                        {this.state.liked ? <AntDesign name="heart" size={20} color="blue" /> : <AntDesign name="hearto" size={20} color="blue" />}
+                                        {this.state.liked ? <AntDesign name="heart" size={20} color="#f01d71" /> : <AntDesign name="hearto" size={20} color="#f01d71" />}
                                     </TouchableOpacity>
 
                                 </View>
