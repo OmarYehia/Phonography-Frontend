@@ -6,7 +6,8 @@ import { TOKEN } from '../../ENV'
 import Post from './Post'
 
 export class allPosts extends Component {
-    constructor() {
+    constructor(props) {
+        console.log("props",props.route.params);
         super();
         this.state = {
             posts: [],
@@ -35,7 +36,7 @@ export class allPosts extends Component {
             <ScrollView >
                 {this.state.loading ?
                     <Text>Loading ...</Text> :
-                    ((this.state.posts.length) ? this.state.posts.map(post => <Post key={post._id} post={post} />) : <Text>No Available Posts to show.</Text>)}
+                    ((this.state.posts.length) ? this.state.posts.map(post => <Post key={post._id} post={post} token={this.props.route.params.userToken}/>) : <Text>No Available Posts to show.</Text>)}
             </ScrollView>
         )
     }

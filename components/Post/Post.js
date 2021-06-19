@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, TextInput, Image, Platform, TouchableOpacity, Alert, FlatList, TouchableWithoutFeedback, SafeAreaView } from 'react-native';
+import { Modal, StyleSheet, Text, View, TextInput, Image, Platform, TouchableOpacity, Alert, FlatList, TouchableWithoutFeedback, SafeAreaView, ScrollView } from 'react-native';
+import { MaterialIcons } from "@expo/vector-icons";
 import { Card, Button, Icon, Input, Overlay, ListItem, Avatar } from 'react-native-elements'
 import { BACKEND_URL } from '../../ENV'
 import { API_URL } from '../../@env'
@@ -7,6 +8,8 @@ import jwt_decode from "jwt-decode";
 import { TOKEN } from '../../ENV'
 import avatar from '../../assets/default-avatar.jpg'
 import Zicon from 'react-native-vector-icons/FontAwesome';
+import { AntDesign } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { List } from 'react-native-paper';
 
 
@@ -25,12 +28,25 @@ export class Post extends Component {
             comment: null,
             disabled: true,
             onePostSelected: false,
+            token: props.token,
+            lastPress: 0
         }
+    }
+    onPress = () => {
+        var delta = new Date().getTime() - this.state.lastPress;
+
+        if (delta < 200) {
+            this.likePost()
+        }
+
+        this.setState({
+            lastPress: new Date().getTime()
+        })
     }
     componentDidMount() {
         fetch(`${BACKEND_URL}/comment/post/${this.state.post._id}`, {
             headers: {
-                'Authorization': `Bearer ${TOKEN}`
+                'Authorization': `Bearer ${this.state.token}`
             }
         })
             .then(response => response.json())
@@ -41,6 +57,9 @@ export class Post extends Component {
                 })
             })
     }
+
+
+
     _onImageLoadError = (event) => {
         console.warn(event.nativeEvent.error);
         this.setState({ error: true });
@@ -52,7 +71,7 @@ export class Post extends Component {
             fetch(`${BACKEND_URL}/posts/${this.state.post._id}/like`, {
                 method: "PUT",
                 headers: {
-                    'Authorization': `Bearer ${TOKEN}`
+                    'Authorization': `Bearer ${this.state.token}`
                 }
             })
                 .then(response => response.json())
@@ -68,7 +87,7 @@ export class Post extends Component {
             fetch(`${BACKEND_URL}/posts/${this.state.post._id}/unlike`, {
                 method: "DELETE",
                 headers: {
-                    'Authorization': `Bearer ${TOKEN}`
+                    'Authorization': `Bearer ${this.state.token}`
                 }
             })
                 .then(response => response.json())
@@ -92,7 +111,7 @@ export class Post extends Component {
             method: "POST",
             headers: {
                 'content-type': 'application/json',
-                'Authorization': `Bearer ${TOKEN}`
+                'Authorization': `Bearer ${this.state.token}`
             },
             body: JSON.stringify(sentBody)
         })
@@ -108,24 +127,24 @@ export class Post extends Component {
         this.setState({ onePostSelected: !this.state.onePostSelected })
     }
     pressHandler = (item) => {
-        navigation.navigate('User Profile', item);
+        this.props.navigation.navigate('User Profile', item);
     }
-    deleteComment=(id)=>{
-        fetch(`${BACKEND_URL}/comment/${id}`,{
-            method:"DELETE",
-            headers:{
-                'Authorization':`Bearer ${TOKEN}`
+    deleteComment = (id) => {
+        fetch(`${BACKEND_URL}/comment/${id}`, {
+            method: "DELETE",
+            headers: {
+                'Authorization': `Bearer ${this.state.token}`
             }
         })
-        .then(response=>response.json())
-        .then(result=>{
-            if(result.success){
-                Alert.alert("Success","Comment deleted Successfully")
-                this.componentDidMount();
-            }else{
-                Alert.alert("Failure",result.errors.message)
-            }
-        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    Alert.alert("Success", "Comment deleted Successfully")
+                    this.componentDidMount();
+                } else {
+                    Alert.alert("Failure", result.errors.message)
+                }
+            })
     }
     render() {
         const alt = "Image Not availabe!";
@@ -134,7 +153,7 @@ export class Post extends Component {
             !this.state.onePostSelected ?
                 (<Card>
                     <Card.Title >
-                        <ListItem containerStyle={{ padding:0}} onPress={() => this.pressHandler(item)}>
+                        <ListItem containerStyle={{ padding: 0 }} onPress={() => this.pressHandler({ userId: this.state.currentUserId, token: this.state.token })}>
                             <Avatar rounded size="small" source={require("../../assets/default-avatar.jpg")} />
                             <ListItem.Content>
                                 <ListItem.Title>@{this.state.post.author.name}</ListItem.Title>
@@ -144,7 +163,7 @@ export class Post extends Component {
                     </Card.Title>
 
                     <Card.Divider />
-                    <Card.Image source={{ uri: this.state.post.image }}>
+                    <Card.Image source={{ uri: this.state.post.image }} onPress={() => this.onPress()}>
 
                     </Card.Image>
                     <Text style={{ margin: 10, }}>
@@ -159,12 +178,11 @@ export class Post extends Component {
                     </Text>
                     <Card.Divider />
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <TouchableOpacity onPress={() => this.likePost()}>
-
-                            <Text><Zicon name="heart" size={20} color="blue" /> {this.state.liked ? "Unlike" : "Like"}</Text>
+                        <TouchableOpacity onPress={() => this.likePost()} style={{ flex: 1, borderRightWidth: 1, alignItems: 'center' }}>
+                            {this.state.liked ? <AntDesign name="heart" size={20} color="blue" /> : <AntDesign name="hearto" size={20} color="blue" />}
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.setState({ disabled: !this.state.disabled, comment: null })}>
-                            <Text><Zicon name="comments" size={20} color="blue" /> Add Comment</Text>
+                        <TouchableOpacity style={{ flex: 1, alignItems: 'center' }} onPress={() => this.setState({ disabled: !this.state.disabled, comment: null })}>
+                            <FontAwesome name="comment-o" size={20} color="blue" />
                         </TouchableOpacity>
                     </View>
                     {!this.state.disabled && <Input
@@ -188,44 +206,56 @@ export class Post extends Component {
                 </Card>
                 ) :
                 (
-                    <View>
-                        <Card>
-                            <Card.Title>
-                                <ListItem>
-                                    <Avatar rounded size="small" source={require("../../assets/default-avatar.jpg")} />
-                                    <ListItem.Content>
-                                        <ListItem.Title>@{this.state.post.author.name}</ListItem.Title>
-                                        <ListItem.Subtitle>{this.state.post.author.email}</ListItem.Subtitle>
-                                    </ListItem.Content>
-                                </ListItem>
-                            </Card.Title>
-                            <Card.Divider />
-                            <Card.Image source={{ uri: this.state.post.image }}>
+                    <Modal
+                        animationType="slide"
+                        visible={this.state.onePostSelected}
+                    >
+                        <MaterialIcons
+                            name="close"
+                            size={24}
+                            style={{ ...syles.modalToggle, ...syles.modalClose }}
+                            onPress={() => {
+                                this.toggleOnePostSelected();
+                            }}
+                        />
+                        <ScrollView>
 
-                            </Card.Image>
-                            <Text style={{ margin: 10 }}>
-                                {this.state.post.caption}
-                            </Text>
-                            <Text style={{ margin: 10, color: 'blue' }}>
-                                #{this.state.post.category.name}
-                            </Text>
-                            <Text style={{ margin: 10 }} onPress={() => this.toggleOnePostSelected()}>
-                                {this.state.numberofLikes} Likes . {this.state.numberOfComments} Comments
-                            </Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                                <TouchableOpacity onPress={() => this.likePost()}>
+                            <Card>
+                                <Card.Title>
+                                    <ListItem containerStyle={{ padding: 0 }} onPress={() => this.pressHandler({ userId: this.state.currentUserId, token: this.state.token })}>
+                                        <Avatar rounded size="small" source={require("../../assets/default-avatar.jpg")} />
+                                        <ListItem.Content>
+                                            <ListItem.Title>@{this.state.post.author.name}</ListItem.Title>
+                                            <ListItem.Subtitle>{this.state.post.author.email}</ListItem.Subtitle>
+                                        </ListItem.Content>
+                                    </ListItem>
+                                </Card.Title>
+                                <Card.Divider />
+                                <Card.Image source={{ uri: this.state.post.image }}>
 
-                                    <Text><Zicon name="heart" size={20} color="blue" /> {this.state.liked ? "Unlike" : "Like"}</Text>
-                                </TouchableOpacity>
+                                </Card.Image>
+                                <Text style={{ margin: 10 }}>
+                                    {this.state.post.caption}
+                                </Text>
+                                <Text style={{ margin: 10, color: 'blue' }}>
+                                    #{this.state.post.category.name}
+                                </Text>
+                                <Text style={{ margin: 10 }} onPress={() => this.toggleOnePostSelected()}>
+                                    {this.state.numberofLikes} Likes . {this.state.numberOfComments} Comments
+                                </Text>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                                    <TouchableOpacity onPress={() => this.likePost()} style={{ flex: 1, alignItems: 'center' }}>
+                                        {this.state.liked ? <AntDesign name="heart" size={20} color="blue" /> : <AntDesign name="hearto" size={20} color="blue" />}
+                                    </TouchableOpacity>
 
-                            </View>
-                            <Text>{'\n'}</Text>
-                            <Card.Divider />
-                            <SafeAreaView style={{ flex: 1 }}>
-                                <FlatList
-                                    data={this.state.comments}
-                                    keyExtractor={(item) => item._id}
-                                    renderItem={({ item }) =>
+                                </View>
+                                <Text>{'\n'}</Text>
+                                <Card.Divider />
+                                <SafeAreaView >
+                                    <FlatList
+                                        data={this.state.comments}
+                                        keyExtractor={(item) => item._id}
+                                        renderItem={({ item }) =>
                                             <ListItem bottomDivider>
                                                 <Avatar source={require("../../assets/default-avatar.jpg")} />
                                                 <TouchableOpacity onLongPress={() => {
@@ -235,12 +265,12 @@ export class Post extends Component {
                                                         [
                                                             {
                                                                 text: "Cancel",
-                                                                onPress: ()=>console.log("cancelled"),
+                                                                onPress: () => console.log("cancelled"),
                                                                 style: "Cancel"
                                                             },
                                                             {
                                                                 text: "Yes",
-                                                                onPress: ()=>this.deleteComment(item._id)
+                                                                onPress: () => this.deleteComment(item._id)
                                                             }
                                                         ]
                                                     )
@@ -253,28 +283,31 @@ export class Post extends Component {
                                                 </TouchableOpacity>
                                                 <Card.Divider />
                                             </ListItem>
+                                        }
+                                    />
+                                </SafeAreaView>
+                                <Input
+                                    style={{ marginTop: 10 }}
+                                    placeholder='Write a comment ...'
+                                    onChangeText={text => {
+                                        this.setState({ comment: text ? text : null })
+                                    }}
+                                    rightIcon={
+                                        this.state.comment != null && <Icon
+                                            name='sc-telegram'
+                                            type='evilicon'
+                                            color='#0099ff'
+                                            disabled={!this.state.comment}
+                                            onPress={() => this.addComment()}
+                                        />
                                     }
                                 />
-                            </SafeAreaView>
-                            <Input
-                                style={{ marginTop: 10 }}
-                                placeholder='Write a comment ...'
-                                onChangeText={text => {
-                                    this.setState({ comment: text ? text : null })
-                                }}
-                                rightIcon={
-                                    this.state.comment != null && <Icon
-                                        name='sc-telegram'
-                                        type='evilicon'
-                                        color='#0099ff'
-                                        disabled={!this.state.comment}
-                                        onPress={() => this.addComment()}
-                                    />
-                                }
-                            />
-                        </Card>
+                            </Card>
 
-                    </View>
+                        </ScrollView>
+                    </Modal>
+
+
                 )
         )
     }
@@ -296,7 +329,26 @@ const syles = StyleSheet.create({
         lineHeight: 30,
         alignContent: 'center',
         justifyContent: 'center'
-    }
+    },
+    modalToggle: {
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: "#f2f2f2",
+        padding: 10,
+        borderRadius: 10,
+        alignSelf: "center",
+    },
+    modalClose: {
+        marginTop: 20,
+        marginBottom: 0,
+    },
+    modalContent: {
+        flex: 1,
+    },
+    itemContent: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
 })
 
 export default Post

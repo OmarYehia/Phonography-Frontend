@@ -12,7 +12,7 @@ class addPostForm extends Component {
         this.state = {
             caption: null,
             category: null,
-            categories: [],
+            categories: null,
             image: {},
             errors: []
         }
@@ -37,7 +37,7 @@ class addPostForm extends Component {
         })
             .then(response => {
                 console.log("inside 1");
-                response.json()
+                return response.json()
             })
             .then(result => {
                 console.log("inside");
@@ -63,7 +63,6 @@ class addPostForm extends Component {
             console.log(result);
             this.setState({ image: { uri: result.uri, name: name, type: `image/${extension}` } });
         }
-
     }
     takePhoto = async () => {
         let result = await ImagePicker.launchCameraAsync({
@@ -84,6 +83,7 @@ class addPostForm extends Component {
         }
     }
     submitPost = () => {
+        console.log(this.state.image);
         let myForm = new FormData();
         myForm.append('postImage',
             this.state.image
@@ -115,20 +115,21 @@ class addPostForm extends Component {
                 <TextInput>
                     Select a Category for your photo:
                 </TextInput>
-                <Picker selectedValue={this.state.category}
+                <Picker selectedValue={null}
                     style={{ height: 50, width: 150 }}
-                    onValueChange={(itemValue, itemIndex) => {
+                    onValueChange={(itemValue) => {
                         this.state.category = itemValue;
                         console.log(this.state.category);
                     }}
                 >
                     <Picker.Item label="Select category" value="#" />
-                    {this.state.categories.length && this.state.categories.map((each) => {
+                    {this.state.categories && this.state.categories.map((each) => {
                         return (
                             <Picker.Item key={each._id} label={each.name} value={each._id} />
                         )
                     })}
                 </Picker>
+                
                 <Button title="Pick an image from camera roll" onPress={this.pickImage} />
                 <Text>Or</Text>
                 <Button title="Take a photo" onPress={this.takePhoto} />
