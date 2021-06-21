@@ -22,6 +22,7 @@ import { AuthContext } from "../context/AuthContext";
 import { FlatList } from "react-native-gesture-handler";
 import { Formik } from "formik";
 import * as yup from "yup";
+import { showMessage } from "react-native-flash-message";
 
 const registerSchema = yup.object({
   email: yup
@@ -77,8 +78,8 @@ export default function UserProfile({ route, navigation }) {
           allPosts.map((post) => {
             likes += post.likes.length;
           });
-          setLikesCount(likes);
         }
+        setLikesCount(likes);
       } catch (error) {
         console.log(error);
         if (error.message == "Not found") {
@@ -180,6 +181,12 @@ ${res.errors.country}
                     } else {
                       setUser(res.data.user);
                       setShowInfoModal(false);
+                      showMessage({
+                        message: "Profile updated succesfully!",
+                        type: "success",
+                        duration: 2500,
+                        icon: "auto",
+                      });
                     }
                   }}>
                   {(props) => (

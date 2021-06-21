@@ -8,6 +8,7 @@ import jwt_decode from "jwt-decode";
 import { AuthContextProvider } from "./context/AuthContext";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
+import FlashMessage, { showMessage, hideMessage } from "react-native-flash-message";
 
 import MainNavigator from "./routes/mainTabNavigator";
 
@@ -23,6 +24,7 @@ export default function App() {
     "nunito-light": require("./assets/fonts/Nunito-Light.ttf"),
   });
   const [userId, setUserId] = useState(null);
+  const [role, setRole] = useState(null);
 
   /* useReducer is similiar to useState, it takes two arguments(reducer, initialState), it changes the
      state depending on the input type given to the dispatch() function.
@@ -41,6 +43,8 @@ export default function App() {
             isLoading: false,
           };
         case "SIGN_IN":
+          setUserId(action.userId);
+          setRole(action.role);
           return {
             ...prevState,
             isSignout: false,
@@ -67,6 +71,7 @@ export default function App() {
     const decodedToken = jwt_decode(token);
     const currentDate = new Date();
     setUserId(decodedToken.userId);
+    setRole(decodedToken.role);
 
     if (decodedToken.exp * 1000 < currentDate.getTime()) {
       // Token expired
@@ -120,11 +125,12 @@ export default function App() {
             <Stack.Screen
               name="main"
               component={MainNavigator}
-              initialParams={{ ...state, userId }}
+              initialParams={{ ...state, userId, role }}
             />
           )}
         </Stack.Navigator>
       </NavigationContainer>
+      <FlashMessage position="top" />
     </AuthContextProvider>
   );
 }

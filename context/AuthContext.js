@@ -1,6 +1,7 @@
 import React, { createContext, useMemo } from "react";
 import { API_URL } from "../@env";
 import * as SecureStore from "expo-secure-store";
+import jwt_decode from "jwt-decode";
 
 const AuthContext = createContext();
 
@@ -21,12 +22,17 @@ function AuthContextProvider(props) {
           });
 
           const jsonRes = await res.json();
-          console.log(jsonRes);
+          const decodedToken = jwt_decode(jsonRes.data.token);
 
           if (jsonRes.success) {
             // Saving the token in SecureStore
             await SecureStore.setItemAsync("userToken", jsonRes.data.token);
-            props.dispatch({ type: "SIGN_IN", token: jsonRes.data.token });
+            props.dispatch({
+              type: "SIGN_IN",
+              token: jsonRes.data.token,
+              userId: decodedToken.userId,
+              role: decodedToken.role,
+            });
           }
 
           return jsonRes;
@@ -45,10 +51,17 @@ function AuthContextProvider(props) {
 
           const jsonRes = await res.json();
 
+          const decodedToken = jwt_decode(jsonRes.data.token);
+
           if (jsonRes.success) {
             // Saving the token in SecureStore
             await SecureStore.setItemAsync("userToken", jsonRes.data.token);
-            props.dispatch({ type: "SIGN_IN", token: jsonRes.data.token });
+            props.dispatch({
+              type: "SIGN_IN",
+              token: jsonRes.data.token,
+              userId: decodedToken.userId,
+              role: decodedToken.role,
+            });
           }
           return jsonRes;
         } catch (error) {
