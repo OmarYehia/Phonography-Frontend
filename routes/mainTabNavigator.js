@@ -2,7 +2,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import CompetitionStack from "../routes/competitionStack";
+import PostStack from "../routes/postStack";
 import PostForm from "../components/Post/addPostForm";
 import Home from "../screens/Home";
 import UserProfile from "../screens/UserProfile";
@@ -31,6 +33,9 @@ export default function MainNavigator({ route }) {
           } else if (state.role === "admin" && route.name === "Admin") {
             iconName = focused ? "settings" : "settings-outline";
             return <Ionicons name={iconName} size={size} color={color} />;
+          }else if (route.name === "Competitions") {
+            iconName = focused ? "trophy-variant" : "trophy-variant-outline"
+            return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
           }
         },
       })}
@@ -38,8 +43,9 @@ export default function MainNavigator({ route }) {
         activeTintColor: "#f01d71",
         inactiveTintColor: "gray",
       }}>
-      <Tab.Screen name="Home" component={CompetitionStack} initialParams={state} />
+      <Tab.Screen name="Home" component={PostStack} initialParams={state} />
       <Tab.Screen name="Categories" component={CategoriesScreen} />
+      <Tab.Screen name="Competitions" component={CompetitionStack} initialParams={state}/>
       <Tab.Screen
         name="User Profile"
         component={UserProfile}

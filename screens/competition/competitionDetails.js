@@ -8,35 +8,44 @@ import SolidButton from "../../components/shared/SolidButton";
 import jwt_decode from "jwt-decode";
 import Spinner from "react-native-loading-spinner-overlay";
 
-export default function CompetitionDetails({ route }) {
+
+export default function CompetitionDetails({ route, navigation }) {
   const [competitors, setCompetitors] = useState(null);
   const [isJoined, setIsJoined] = useState();
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [changed, setChanged] = useState(false);
+
 
   const userToken = route.params.userToken;
 
-  const joinHandler = async () => {
-    try {
-      const res = await fetch(`${API_URL}/competition/${route.params._id}/competitor/join`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userToken}`,
-        },
-        method: "PUT",
-      });
-
-      const jsonRes = await res.json();
-      if (jsonRes.Success) {
-        setIsJoined(true);
-      }
-      // console.log("heey",isJoined)
-      // console.log(jsonRes);
-      return jsonRes;
-    } catch (error) {
-      console.log(error);
-      return error;
+    const pressHandler = (competitionId,currentUserId, userToken) => {
+        navigation.navigate('Competitors', {competitionId, currentUserId, userToken});
     }
+    const joinHandler = async () => {
+        try {
+            const res = await fetch(`${API_URL}/competition/${route.params._id}/competitor/join`, {
+              headers: { 
+                  "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${userToken}`
+              },
+              method: "PUT",
+            });
+           
+            const jsonRes = await res.json();
+            if(jsonRes.Success){
+                setIsJoined(true);
+                setChanged(!changed);
+                
+            }
+           // console.log("heey",isJoined)
+           // console.log(jsonRes);
+            return jsonRes;
+  
+          } catch (error) {
+              console.log(error)
+            return error;
+          }
   };
   const disjoinHandler = async () => {
     try {
@@ -51,6 +60,7 @@ export default function CompetitionDetails({ route }) {
       const jsonRes = await res.json();
       if (jsonRes.Success) {
         setIsJoined(false);
+        setChanged(!changed)
         //   console.log(isJoined);
       }
       // console.log(jsonRes);
@@ -65,18 +75,34 @@ export default function CompetitionDetails({ route }) {
     const currentUser = decodedToken.userId;
     setCurrentUserId(currentUser);
 
-    setCompetitors(route.params.competitors);
-    if (currentUser) {
-      setLoading(false);
-      route.params.competitors.forEach((competitor) => {
-        if (currentUser === competitor._id) {
-          setIsJoined(true);
-        } else {
-          setIsJoined(false);
-        }
-      });
-    }
-  }, []);
+    fetch(`${API_URL}/competition/${route.params._id}/competitors`)
+          .then(res => {
+              if(res.ok) {
+                  return res.json()
+              } else {
+                  if (res.status === 404){
+                      throw Error("Notfound")
+                  }
+              }
+          })
+          .then(data => {
+              setCompetitors(data.data.competitors);
+              if(currentUser){
+                setLoading(false);
+                data.data.competitors.forEach((competitor) => {
+
+                    if(currentUser === competitor._id){
+                        setIsJoined(true)
+                    } else{
+                        setIsJoined(false)
+                    }
+                });    
+              }    
+          })
+          .catch(err => {
+              console.log(err)
+          })
+  }, [changed]);
 
   return (
     <View style={globalStyles}>
@@ -95,9 +121,13 @@ export default function CompetitionDetails({ route }) {
           <Text style={globalStyles.normalText}>From: {route.params.startDate}</Text>
           <Text style={globalStyles.normalText}>To: {route.params.endDate}</Text>
         </View>
+        <View style={styles.items}>
+                <Text style={globalStyles.normalText}>Competitors   </Text>
+                <Ionicons name="people-outline" size={30} color="black"onPress={() => pressHandler(route.params._id,currentUserId,userToken)} />
+        </View>
         {!isJoined ? (
           <View style={styles.items}>
-            <SolidButton text="Join This Context" onPress={() => joinHandler()} />
+            <SolidButton text="Join This Context"  onPress={() => joinHandler()} />
           </View>
         ) : (
           <View style={styles.items}>
