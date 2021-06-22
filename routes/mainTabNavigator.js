@@ -11,11 +11,13 @@ import Home from "../screens/Home";
 import UserProfile from "../screens/UserProfile";
 import React from "react";
 import CategoriesScreen from "../screens/CategoriesScreen";
+import AdminDrawer from "./AdminDrawer";
 
 const Tab = createBottomTabNavigator();
 
 export default function MainNavigator({ route }) {
   const state = route.params;
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -29,7 +31,10 @@ export default function MainNavigator({ route }) {
             return <FontAwesome name={iconName} size={size} color={color} />;
           } else if (route.name === "Categories") {
             return <MaterialIcons name="category" size={size} color={color} />;
-          } else if (route.name === "Competitions") {
+          } else if (state.role === "admin" && route.name === "Admin") {
+            iconName = focused ? "settings" : "settings-outline";
+            return <Ionicons name={iconName} size={size} color={color} />;
+          }else if (route.name === "Competitions") {
             iconName = focused ? "trophy-variant" : "trophy-variant-outline"
             return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
           } else if (route.name === " ") {
@@ -51,6 +56,9 @@ export default function MainNavigator({ route }) {
         component={UserProfile}
         initialParams={{ token: state.userToken, userId: state.userId }}
       />
+      {state.role == "admin" && (
+        <Tab.Screen name="Admin" component={AdminDrawer} initialParams={state} />
+      )}
       {/* <Stack.Screen name="Home" component={Home} initialParams={state} /> */}
       {/* <Stack.Screen name="Home" component={CompetitionStack} />
       <Stack.Screen name="Home" component={Home} initialParams={state} /> */}

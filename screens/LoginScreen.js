@@ -44,9 +44,10 @@ export default function LoginScreen({ navigation }) {
           initialValues={{ email: "", password: "" }}
           validationSchema={loginSchema}
           onSubmit={async (values, actions) => {
-            actions.resetForm();
+            // actions.resetForm();
             setLoading(true);
             const res = await signIn(values);
+            console.log(res);
             setLoading(false);
             if (!res.success) {
               if (res.errors.email) {

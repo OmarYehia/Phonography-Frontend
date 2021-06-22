@@ -60,6 +60,10 @@ export default function RegisterScreen({ navigation }) {
           }}
           validationSchema={registerSchema}
           onSubmit={async (values, actions) => {
+            if (!values.country) {
+              actions.setErrors({ country: "Pleae pick a country" });
+              return;
+            }
             setLoading(true);
             const res = await signUp(values);
             setLoading(false);
@@ -200,7 +204,6 @@ ${res.errors.country}
                       <CountryPicker
                         onSelect={(country) => {
                           props.values.country = country.name;
-                          props.errors.country = null;
                           setCountry(country.name);
                         }}
                         withFlag
