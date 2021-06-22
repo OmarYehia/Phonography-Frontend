@@ -15,7 +15,7 @@ export class allPosts extends Component {
     }
     componentDidMount() {
         this.state.loading = true;
-        fetch(`${BACKEND_URL}/posts`, {
+        fetch(`${API_URL}/posts`, {
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${TOKEN}`

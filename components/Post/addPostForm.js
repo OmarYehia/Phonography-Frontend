@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, TextInput, Image, Button, Platform, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { BACKEND_URL } from '../../ENV'
+import { BACKEND_URL } from '../../ENV';
+import { API_URL } from "../../@env";
 import { TOKEN } from '../../ENV'
 import * as ImagePicker from 'expo-image-picker';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -30,7 +31,7 @@ class addPostForm extends Component {
                 }
             }
         })
-        fetch(`${BACKEND_URL}/categories`, {
+        fetch(`${API_URL}/categories`, {
             headers: {
                 'Authorization': `Bearer ${TOKEN} `
             }
@@ -92,7 +93,7 @@ class addPostForm extends Component {
         myForm.append('category', this.state.category);
 
         console.log("before fetch");
-        fetch(`${BACKEND_URL}/posts`, {
+        fetch(`${API_URL}/posts`, {
             method: "POST",
             headers: {
                 'Authorization': `Bearer ${TOKEN} `,

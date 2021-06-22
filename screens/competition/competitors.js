@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
+import { Avatar } from 'react-native-elements'
 import { globalStyles } from '../../styles/global';
 import Card from '../../components/shared/card';
 import { Ionicons } from '@expo/vector-icons';
@@ -101,7 +102,11 @@ export default function Competitor({ route, navigation}){
                 <TouchableOpacity onPress={() => pressHandler(item._id)}>
                     <Card >
                         <View style={styles.itemContent}>
-                           <Text style={globalStyles.titleText}>{item.name}</Text>
+                          <View style={{flexDirection: 'row'}}>
+                           <Avatar rounded size="small" source={require("../../assets/default-avatar.jpg")}  />
+                           <Text style={{...globalStyles.titleText,marginLeft:10}}>{item.name}</Text>
+                          </View>
+                        
                            {! (route.params.currentUserId === item._id) ?
                                 <SolidButton 
                                     text={isFriend ? "UnFollow" : "Follow"}
@@ -123,8 +128,10 @@ export default function Competitor({ route, navigation}){
 const styles = StyleSheet.create({
     
     itemContent: {
+        flex:1,
         flexDirection: 'row',
         justifyContent:"space-between",
+        alignContent:"center"
     }
   })
   

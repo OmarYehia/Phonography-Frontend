@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View,ScrollView } from "react-native";
 import { globalStyles } from "../../styles/global";
 import Card from "../../components/shared/card";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,6 +7,8 @@ import { API_URL } from "../../@env";
 import SolidButton from "../../components/shared/SolidButton";
 import jwt_decode from "jwt-decode";
 import Spinner from "react-native-loading-spinner-overlay";
+import Post from "../../components/Post/Post";
+import AddPostForm from "../../components/Post/addPostForm";
 
 
 export default function CompetitionDetails({ route, navigation }) {
@@ -15,6 +17,7 @@ export default function CompetitionDetails({ route, navigation }) {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [changed, setChanged] = useState(false);
+  const [posts, setPosts] = useState(null);
 
 
   const userToken = route.params.userToken;
@@ -88,7 +91,7 @@ export default function CompetitionDetails({ route, navigation }) {
           .then(data => {
               setCompetitors(data.data.competitors);
               if(currentUser){
-                setLoading(false);
+               
                 data.data.competitors.forEach((competitor) => {
 
                     if(currentUser === competitor._id){
@@ -102,10 +105,33 @@ export default function CompetitionDetails({ route, navigation }) {
           .catch(err => {
               console.log(err)
           })
+        //get all posts of competition
+        fetch(`${API_URL}/posts/competition/${route.params._id}`)
+          .then(res => {
+              if(res.ok) {
+                  return res.json()
+              } else {
+                  if (res.status === 404){
+                      throw Error("Notfound")
+                  }
+              }
+          })
+          .then(data => {
+            console.log(data);
+            setPosts(data.data.post);
+             // if (posts){
+                console.log(posts)
+                setLoading(false);
+            //  }
+             
+          })
+          .catch(err => {
+              console.log(err)
+          })
   }, [changed]);
 
   return (
-    <View style={globalStyles}>
+    <ScrollView style={globalStyles}>
       <Spinner visible={loading} />
       <Card>
         <Text style={{ ...globalStyles.titleText, ...styles.nameText }}>{route.params.name}</Text>
@@ -135,7 +161,21 @@ export default function CompetitionDetails({ route, navigation }) {
           </View>
         )}
       </Card>
-    </View>
+      {!isJoined ? (
+          <View >
+            <Text style={globalStyles.paragraph}>Join The Contest To post your Images</Text>
+          </View>
+        ) : (
+          <View >
+            <AddPostForm/>
+          </View>
+        )}
+       <ScrollView >
+                {loading ?
+                    <Text>Loading ...</Text> :
+                    ( posts.map(post => <Post key={post._id} post={post} token={userToken} navigation={navigation}/>) )}
+            </ScrollView>
+    </ScrollView>
   );
 }
 

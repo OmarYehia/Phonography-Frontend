@@ -44,7 +44,7 @@ export class Post extends Component {
         })
     }
     componentDidMount() {
-        fetch(`${BACKEND_URL}/comment/post/${this.state.post._id}`, {
+        fetch(`${API_URL}/comment/post/${this.state.post._id}`, {
             headers: {
                 'Authorization': `Bearer ${this.state.token}`
             }
@@ -68,7 +68,7 @@ export class Post extends Component {
         if (!this.state.liked) {
             console.log("like post");
 
-            fetch(`${BACKEND_URL}/posts/${this.state.post._id}/like`, {
+            fetch(`${API_URL}/posts/${this.state.post._id}/like`, {
                 method: "PUT",
                 headers: {
                     'Authorization': `Bearer ${this.state.token}`
@@ -84,7 +84,7 @@ export class Post extends Component {
                 })
         } else {
             console.log("Unlike post");
-            fetch(`${BACKEND_URL}/posts/${this.state.post._id}/unlike`, {
+            fetch(`${API_URL}/posts/${this.state.post._id}/unlike`, {
                 method: "DELETE",
                 headers: {
                     'Authorization': `Bearer ${this.state.token}`
@@ -107,7 +107,7 @@ export class Post extends Component {
             body: this.state.comment
         }
         console.log(sentBody);
-        fetch(`${BACKEND_URL}/comment`, {
+        fetch(`${API_URL}/comment`, {
             method: "POST",
             headers: {
                 'content-type': 'application/json',
@@ -130,7 +130,7 @@ export class Post extends Component {
         this.props.navigation.navigate('UserProfile', item);
     }
     deleteComment = (id) => {
-        fetch(`${BACKEND_URL}/comment/${id}`, {
+        fetch(`${API_URL}/comment/${id}`, {
             method: "DELETE",
             headers: {
                 'Authorization': `Bearer ${this.state.token}`
