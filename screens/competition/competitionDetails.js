@@ -81,9 +81,9 @@ export default function CompetitionDetails({ route, navigation }) {
   };
   const endContestHandler = async () => {
     if(posts.length>0){
-      let max = posts[posts.length-1].likes.length 
+      let max = posts[0].likes.length 
       setWinner(posts[0].author);
-      for (let i = posts.length -2; i >= 1 ; i--){
+      for (let i = 1; i < posts.length; i++){
             if(posts[i].likes.length > max){
               max = posts[i].likes.length;
               setWinner(posts[i].author);
@@ -206,7 +206,7 @@ export default function CompetitionDetails({ route, navigation }) {
                 <Ionicons name="people-outline" size={30} color="crimson" />
         </TouchableOpacity>
         <View style={styles.items}>
-                <Text style={globalStyles.normalText}>Winner   </Text>
+                <Text style={globalStyles.normalText}>Winner: {route.params.winner? route.params.winner.name: "No Winner"}   </Text>
                 <FontAwesome5 name="award" size={30} color="crimson" />
         </View>
         {!isEnded ?
