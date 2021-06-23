@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import CompetitionStack from "../routes/competitionStack";
 import PostStack from "../routes/postStack";
 import PostForm from "../components/Post/addPostForm";
@@ -36,6 +37,9 @@ export default function MainNavigator({ route }) {
           }else if (route.name === "Competitions") {
             iconName = focused ? "trophy-variant" : "trophy-variant-outline"
             return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+          } else if (route.name === " ") {
+            iconName = focused ? "plussquare" : "plussquareo"
+            return <AntDesign name={iconName} size={30} color={color} />;
           }
         },
       })}
@@ -45,7 +49,8 @@ export default function MainNavigator({ route }) {
       }}>
       <Tab.Screen name="Home" component={PostStack} initialParams={state} />
       <Tab.Screen name="Categories" component={CategoriesScreen} />
-      <Tab.Screen name="Competitions" component={CompetitionStack} initialParams={state}/>
+      <Tab.Screen name=" " component={PostForm} initialParams={state}/>
+      <Tab.Screen name="Competitions" component={CompetitionStack} initialParams={state} />
       <Tab.Screen
         name="User Profile"
         component={UserProfile}

@@ -5,18 +5,14 @@ import { Card, Button, Icon, Input, Overlay, ListItem, Avatar } from 'react-nati
 import { BACKEND_URL } from '../../ENV'
 import { API_URL } from '../../@env'
 import jwt_decode from "jwt-decode";
-import { TOKEN } from '../../ENV'
-import avatar from '../../assets/default-avatar.jpg'
-import Zicon from 'react-native-vector-icons/FontAwesome';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import { List } from 'react-native-paper';
 
 
 export class Post extends Component {
     constructor(props) {
         super();
-        const decodedToken = jwt_decode(TOKEN);
+        const decodedToken = jwt_decode(props.token);
         this.state = {
             currentUserId: decodedToken.userId,
             post: props.post,
@@ -29,7 +25,9 @@ export class Post extends Component {
             disabled: true,
             onePostSelected: false,
             token: props.token,
-            lastPress: 0
+            lastPress: 0,
+            postOwner: props.post.author._id,
+            imageLoadError: false,
         }
     }
     onPress = () => {
@@ -44,6 +42,7 @@ export class Post extends Component {
         })
     }
     componentDidMount() {
+        this.state.imageLoadError = false;
         fetch(`${API_URL}/comment/post/${this.state.post._id}`, {
             headers: {
                 'Authorization': `Bearer ${this.state.token}`
@@ -153,7 +152,7 @@ export class Post extends Component {
             !this.state.onePostSelected ?
                 (<Card>
                     <Card.Title >
-                        <ListItem containerStyle={{ padding: 0 }} onPress={() => this.pressHandler({ userId: this.state.currentUserId, token: this.state.token })}>
+                        <ListItem containerStyle={{ padding: 0 }} onPress={() => this.pressHandler({ userId: this.state.postOwner, token: this.state.token })}>
                             <Avatar rounded size="small" source={require("../../assets/default-avatar.jpg")} />
                             <ListItem.Content>
                                 <ListItem.Title>@{this.state.post.author.name}</ListItem.Title>
@@ -163,9 +162,10 @@ export class Post extends Component {
                     </Card.Title>
 
                     <Card.Divider />
-                    <Card.Image source={{ uri: this.state.post.image }} onPress={() => this.onPress()}>
-
+                    {!this.state.imageLoadError && <Card.Image source={{ uri: this.state.post.image }} onError={() => this.setState({ imageLoadError: true })} onPress={() => this.onPress()}>
                     </Card.Image>
+                    }
+
                     <Text style={{ margin: 10, }}>
                         {this.state.post.caption}
                     </Text>
@@ -222,7 +222,7 @@ export class Post extends Component {
 
                             <Card>
                                 <Card.Title>
-                                    <ListItem containerStyle={{ padding: 0 }} onPress={() => this.pressHandler({ userId: this.state.currentUserId, token: this.state.token })}>
+                                    <ListItem containerStyle={{ padding: 0 }} onPress={() => this.pressHandler({ userId: this.state.postOwner, token: this.state.token })}>
                                         <Avatar rounded size="small" source={require("../../assets/default-avatar.jpg")} />
                                         <ListItem.Content>
                                             <ListItem.Title>@{this.state.post.author.name}</ListItem.Title>
@@ -231,7 +231,8 @@ export class Post extends Component {
                                     </ListItem>
                                 </Card.Title>
                                 <Card.Divider />
-                                <Card.Image source={{ uri: this.state.post.image }}>
+
+                                <Card.Image source={{ uri: this.state.post.image }} onPress={() => this.onPress()}>
 
                                 </Card.Image>
                                 <Text style={{ margin: 10 }}>

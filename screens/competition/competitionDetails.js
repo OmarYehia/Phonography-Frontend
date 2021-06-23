@@ -81,9 +81,9 @@ export default function CompetitionDetails({ route, navigation }) {
   };
   const endContestHandler = async () => {
     if(posts.length>0){
-      let max = posts[0].likes.length 
+      let max = posts[posts.length-1].likes.length 
       setWinner(posts[0].author);
-      for (let i = 1; i < posts.length; i++){
+      for (let i = posts.length -2; i >= 1 ; i--){
             if(posts[i].likes.length > max){
               max = posts[i].likes.length;
               setWinner(posts[i].author);
@@ -117,7 +117,7 @@ export default function CompetitionDetails({ route, navigation }) {
           setChanged(!changed)
          
         }
-         console.log("heey",jsonRes);
+        
         return jsonRes;
       } catch (error) {
         console.log(error);
@@ -234,7 +234,7 @@ export default function CompetitionDetails({ route, navigation }) {
           </View>
         ) : (
           <View >
-            <AddPostForm competitionId={route.params._id}/>
+            <AddPostForm competitionId={route.params._id} route={route} navigation={navigation}/>
           </View>
         ): null}
         { !isEnded && userRole === "admin"? (<SolidButton text="End Contest" onPress={()=>endContestHandler()} />):null}

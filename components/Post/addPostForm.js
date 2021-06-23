@@ -10,7 +10,8 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 class addPostForm extends Component {
     constructor(props) {
         super();
-        console.log(props.competitionId)
+        console.log("id",props.competitionId)
+        console.log("route",props.route.params.userToken)
         this.state = {
             caption: null,
             category: null,
@@ -50,6 +51,7 @@ class addPostForm extends Component {
             })
     }
     pickImage = async () => {
+        console.log(Platform);
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -80,9 +82,8 @@ class addPostForm extends Component {
         if (!result.cancelled) {
             let res = result.uri.replace('file://', '').split('/')
             let name = res[res.length - 1]
-            let extension = name.split('.')[1] -
-                console.log(result);
-            this.setState({ image: { uri: result.uri, name: name, extension: extension } });
+            let extension = name.split('.')[1] 
+            this.setState({ image: { uri: result.uri, name: name, type: `image/${extension}` } });
         }
     }
     submitPost = () => {
@@ -99,14 +100,20 @@ class addPostForm extends Component {
         fetch(`${API_URL}/posts`, {
             method: "POST",
             headers: {
-                'Authorization': `Bearer ${TOKEN} `,
+                'Authorization': `Bearer ${this.props.route.params.userToken} `,
                 'Content-Type': 'multipart/form-data',
                 'Accept': '*/*'
             },
             body: myForm
         })
             .then(response => response.json())
-            .then(result => console.log(result))
+            .then(result => {
+                if (result.success){
+                    console.log("success");
+                    this.props.navigation.navigate("Home",this.props)
+                }
+                console.log(result);
+            })
             .catch(err => console.log(err))
     }
     render() {
@@ -119,14 +126,14 @@ class addPostForm extends Component {
                 <TextInput>
                     Select a Category for your photo:
                 </TextInput>
-                <Picker selectedValue={null}
+                <Picker selectedValue={this.state.category}
+                    mode={'dialog'}
                     style={{ height: 50, width: 150 }}
                     onValueChange={(itemValue) => {
-                        this.state.category = itemValue;
+                        this.setState({category: itemValue})
                         console.log(this.state.category);
                     }}
                 >
-                    <Picker.Item label="Select category" value="#" />
                     {this.state.categories && this.state.categories.map((each) => {
                         return (
                             <Picker.Item key={each._id} label={each.name} value={each._id} />
