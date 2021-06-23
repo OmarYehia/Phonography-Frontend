@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet, Dimensions } from "react-nati
 import { createStackNavigator } from "@react-navigation/stack";
 import Header from "../../components/shared/Header";
 import CategoryForm from "./CategoryForm";
+import CategoriesList from "./CategoriesList";
 
 const Stack = createStackNavigator();
 
@@ -17,7 +18,7 @@ const WideButton = ({ text, onPress }) => (
 const MainController = ({ navigation }) => (
   <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
     <WideButton text="Create Category" onPress={() => navigation.navigate("Create Category")} />
-    <WideButton text="Edit Category" />
+    <WideButton text="Edit Category" onPress={() => navigation.navigate("Edit Category")} />
   </View>
 );
 
@@ -39,7 +40,7 @@ export default function CategoryController({ route }) {
         }}
       />
       <Stack.Screen name="Create Category" component={CategoryForm} initialParams={state} />
-      {/* <Stack.Screen name="Edit Category" component={null} /> */}
+      <Stack.Screen name="Edit Category" component={CategoriesList} initialParams={state} />
     </Stack.Navigator>
   );
 }

@@ -12,7 +12,6 @@ import {
 import { API_URL } from "../../@env";
 import Spinner from "react-native-loading-spinner-overlay";
 import { globalStyles } from "../../styles/global";
-import Card from "../shared/card";
 
 export default function CategoryList() {
   const [categories, setCategories] = useState(null);

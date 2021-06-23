@@ -1,14 +1,26 @@
 import "react-native-gesture-handler";
 import React, { useReducer, useEffect, useState } from "react";
 import { useFonts } from "expo-font";
-import { StyleSheet, Text, View, TextInput, Image, Platform, TouchableOpacity, Alert, FlatList, TouchableWithoutFeedback, SafeAreaView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Image,
+  Platform,
+  TouchableOpacity,
+  Alert,
+  FlatList,
+  TouchableWithoutFeedback,
+  SafeAreaView,
+} from "react-native";
 
 import * as SecureStore from "expo-secure-store";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import jwt_decode from "jwt-decode";
 import { AuthContextProvider } from "./context/AuthContext";
-import PostForm from './components/Post/addPostForm'
+import PostForm from "./components/Post/addPostForm";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
 import FlashMessage, { showMessage, hideMessage } from "react-native-flash-message";
@@ -90,7 +102,7 @@ export default function App() {
     // Fetch the token from  storage
     const bootstrapAsync = async () => {
       let userToken;
-      // await SecureStore.setItemAsync("userToken", "");
+      await SecureStore.setItemAsync("userToken", "");
 
       try {
         userToken = await SecureStore.getItemAsync("userToken");
