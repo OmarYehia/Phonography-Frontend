@@ -22,10 +22,11 @@ function AuthContextProvider(props) {
           });
 
           const jsonRes = await res.json();
-          const decodedToken = jwt_decode(jsonRes.data.token);
-
+         
           if (jsonRes.success) {
             // Saving the token in SecureStore
+            const decodedToken = jwt_decode(jsonRes.data.token);
+            
             await SecureStore.setItemAsync("userToken", jsonRes.data.token);
             props.dispatch({
               type: "SIGN_IN",

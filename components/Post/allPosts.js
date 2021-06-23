@@ -12,6 +12,7 @@ export class allPosts extends Component {
             posts: [],
             loading: true,
         }
+        
     }
     componentDidMount() {
         this.state.loading = true;

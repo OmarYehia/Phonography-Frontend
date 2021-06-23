@@ -12,6 +12,7 @@ import DatePicker from "react-native-datepicker";
 //import { Dropdown } from 'react-native-material-dropdown-v2';
 import { Picker } from "@react-native-picker/picker";
 import { LogBox } from "react-native";
+import { showMessage } from "react-native-flash-message";
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -36,7 +37,7 @@ export default function CompetitionForm({ userToken, flag, competition }) {
           startDate: competition.startDate,
           endDate: competition.endDate,
           sponsor: competition.sponsor._id,
-          prizes: competition.prizes[0],
+          prizes: competition.prizes,
         }
       : {
           name: "",
@@ -78,7 +79,8 @@ export default function CompetitionForm({ userToken, flag, competition }) {
       });
 
       const jsonRes = await res.json();
-      console.log(jsonRes);
+     
+      
       return jsonRes;
     } catch (error) {
       return error;
@@ -97,7 +99,7 @@ export default function CompetitionForm({ userToken, flag, competition }) {
       });
 
       const jsonRes = await res.json();
-      console.log("json request", jsonRes);
+      
       return jsonRes;
     } catch (error) {
       return error;
@@ -118,8 +120,20 @@ export default function CompetitionForm({ userToken, flag, competition }) {
           } else if (flag) {
             res = await editCompetition(values);
           }
-          console.log(res);
-          if (!res.Success) {
+          if (res.Success) {
+            showMessage({
+              message: `Contest ${flag ? "updated" : "created"} succesfully!`,
+              type: "success",
+              duration: 2500,
+              icon: "auto",
+            });
+          } else {
+            showMessage({
+              message: `Contest wasn't ${flag ? "updated" : "created"}. Something went wrong.`,
+              type: "danger",
+              duration: 2500,
+              icon: "auto",
+            });
             let message = "";
             if (res.errors.name) {
               message += `${res.errors.name}`;

@@ -8,14 +8,16 @@ import * as ImagePicker from 'expo-image-picker';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 class addPostForm extends Component {
-    constructor() {
+    constructor(props) {
         super();
+        console.log(props.competitionId)
         this.state = {
             caption: null,
             category: null,
             categories: null,
             image: {},
-            errors: []
+            errors: [],
+            competition: props.competitionId ? props.competitionId : null
         }
     }
     componentDidMount() {
@@ -91,6 +93,7 @@ class addPostForm extends Component {
         );
         myForm.append('caption', this.state.caption);
         myForm.append('category', this.state.category);
+        myForm.append('competition',this.state.competition);
 
         console.log("before fetch");
         fetch(`${API_URL}/posts`, {

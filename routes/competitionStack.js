@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 
 export default function CompetitionStack({route}) {
   const state = route.params;
-  console.log(state);
+ // console.log(state);
   return (
     
     <Stack.Navigator>

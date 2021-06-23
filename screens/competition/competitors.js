@@ -13,6 +13,7 @@ export default function Competitor({ route, navigation}){
    const [competitors, setCompetitors] = useState(null);
    const [isFriend, setIsFriend] = useState();
    const [changed, setChanged] = useState(false);
+   
 
    const userToken = route.params.userToken;
    
@@ -74,15 +75,16 @@ export default function Competitor({ route, navigation}){
     })
     .then(data => {
         setCompetitors(data.data.competitors);
-        data.data.competitors.forEach(competitor => {
+      /*  data.data.competitors.forEach(competitor => {
             if(competitor.followers.includes(route.params.currentUserId)){
-                setIsFriend(true)
-                
+                setIsFriend(true) 
+                   
             }else{
                 setIsFriend(false)
+               
             }
                
-           });
+           });*/
     })  
     .catch(err => {
         console.log(err)
@@ -107,12 +109,17 @@ export default function Competitor({ route, navigation}){
                            <Text style={{...globalStyles.titleText,marginLeft:10}}>{item.name}</Text>
                           </View>
                         
-                           {! (route.params.currentUserId === item._id) ?
-                                <SolidButton 
-                                    text={isFriend ? "UnFollow" : "Follow"}
-                                    onPress={isFriend ? () => unfollowHandler(item._id) : () => followHandler(item._id)}
-                                    borderRadius={5} />   
-                           :null}
+                           { route.params.currentUserId !== item._id  ?
+                             ( (item.followers.includes(route.params.currentUserId) ?
+                               <SolidButton 
+                               text="UnFollow" 
+                               onPress={ () => unfollowHandler(item._id) }
+                               borderRadius={5} />
+                               :<SolidButton 
+                               text= "Follow"
+                               onPress={ () => followHandler(item._id)}
+                               borderRadius={5} />)
+                             ):null}
                            
                         </View>
                     
@@ -121,6 +128,7 @@ export default function Competitor({ route, navigation}){
                 </TouchableOpacity>
                )} 
             />
+                           
         </View>
     )
 }
