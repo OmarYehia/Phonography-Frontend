@@ -15,12 +15,10 @@ export class allPosts extends Component {
             posts: [],
             loading: true,
         }
-        
     }
     componentDidMount() {
         this.state.loading = true;
-        this.state.redirected = false;
-        fetch(`${API_URL}/posts/following`, {
+        fetch(`${API_URL}/posts/model/${this.props.route.params.model}`, {
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${this.props.route.params.userToken}`

@@ -29,7 +29,8 @@ export class Post extends Component {
             lastPress: 0,
             postOwner: props.post.author._id,
             imageLoadError: false,
-            
+            heigth: null,
+            width: null,
         }
         
         
@@ -132,6 +133,12 @@ export class Post extends Component {
     pressHandler = (item) => {
         this.props.navigation.navigate('UserProfile', item);
     }
+    pressHandlerModel = (item) => {
+        this.props.navigation.navigate('Mobile Photos', item);
+    }
+    pressHandlerCategory = (item) => {
+        this.props.navigation.navigate('Category Photos', item);
+    }
     deleteComment = (id) => {
         fetch(`${API_URL}/comment/${id}`, {
             method: "DELETE",
@@ -149,37 +156,52 @@ export class Post extends Component {
                 }
             })
     }
+    getDimensions = () => {
+        Image.getSize(this.state.post.image, (width, height) => {
+            this.setState({ width: width, height: height })
+        })
+    }
     render() {
+        if (!this.state.imageLoadError) {
+            this.getDimensions()
+        }
         const alt = "Image Not availabe!";
         const { error } = this.state;
         return (
             !this.state.onePostSelected ?
                 (<Card>
                     <Card.Title >
-                        <ListItem containerStyle={{ padding: 0 }} onPress={() => this.pressHandler({ userId: this.state.postOwner, token: this.state.token })}>
-                            <Avatar rounded size="small" source={require("../../assets/default-avatar.jpg")} />
+                        <ListItem containerStyle={{ padding: 0 }} >
+                            <Avatar onPress={() => this.pressHandler({ userId: this.state.postOwner, token: this.state.token })} rounded size="small" source={require("../../assets/default-avatar.jpg")} />
                             <ListItem.Content>
-                                <ListItem.Title>@{this.state.post.author.name}</ListItem.Title>
-                                <ListItem.Subtitle>{this.state.post.author.email}</ListItem.Subtitle>
+                                <ListItem.Title onPress={() => this.pressHandler({ userId: this.state.postOwner, token: this.state.token })}>@{this.state.post.author.name}</ListItem.Title>
+                                <ListItem.Subtitle onPress={() => this.pressHandlerModel({ model : this.state.post.meta_data })}>{this.state.post.meta_data ? `Shot by ${this.state.post.meta_data}` : this.state.post.author.email}</ListItem.Subtitle>
                             </ListItem.Content>
                         </ListItem>
                     </Card.Title>
 
                     <Card.Divider />
-                    {!this.state.imageLoadError && <Card.Image source={{ uri: this.state.post.image }} onError={() => this.setState({ imageLoadError: true })} onPress={() => this.onPress()}>
+                    {!this.state.imageLoadError && <Card.Image style={{ height: 300 }} resizeMode={'contain'} source={{ uri: this.state.post.image }} onError={() => this.setState({ imageLoadError: true })} onPress={() => this.onPress()}>
                     </Card.Image>
                     }
 
                     <Text style={{ margin: 10, }}>
                         {this.state.post.caption}
                     </Text>
-                    <Text style={{ margin: 10, color: '#f01d71', textAlign: 'right' }}>
+                    <Text 
+                        onPress={() => this.pressHandlerCategory({ categoryId : this.state.post.category._id })}
+                        style={{ margin: 10, color: '#f01d71', textAlign: 'right' }}>
                         #{this.state.post.category.name}
                     </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Text style={{ margin: 10 }} onPress={() => this.toggleOnePostSelected()}>
+                            {this.state.numberofLikes} Likes . {this.state.numberOfComments} Comments
 
-                    <Text style={{ margin: 10 }} onPress={() => this.toggleOnePostSelected()}>
-                        {this.state.numberofLikes} Likes . {this.state.numberOfComments} Comments
-                    </Text>
+                        </Text>
+                        <Text style={{ margin: 10, color: 'grey'}}>
+                            {this.state.post.created_at - Date.now()}
+                        </Text>
+                    </View>
                     <Card.Divider />
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                         <TouchableOpacity onPress={() => this.likePost()} style={{ flex: 1, borderRightWidth: 1, alignItems: 'center' }}>
