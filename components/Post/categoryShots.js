@@ -9,7 +9,6 @@ import Spinner from "react-native-loading-spinner-overlay";
 
 export class allPosts extends Component {
     constructor(props) {
-        console.log(props);
         super();
         this.state = {
             posts: [],
@@ -18,8 +17,7 @@ export class allPosts extends Component {
     }
     componentDidMount() {
         this.state.loading = true;
-        this.state.redirected = false;
-        fetch(`${BACKEND_URL}/posts/following`, {
+        fetch(`${BACKEND_URL}/posts/category/${this.props.route.params.categoryId}`, {
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${this.props.route.params.userToken}`

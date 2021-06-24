@@ -18,8 +18,7 @@ export class allPosts extends Component {
     }
     componentDidMount() {
         this.state.loading = true;
-        this.state.redirected = false;
-        fetch(`${BACKEND_URL}/posts/following`, {
+        fetch(`${BACKEND_URL}/posts/model/${this.props.route.params.model}`, {
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${this.props.route.params.userToken}`
