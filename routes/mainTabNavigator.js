@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import CompetitionStack from "../routes/competitionStack";
 import PostStack from "../routes/postStack";
+import PostFormStack from "../routes/postFormStack";
 import PostForm from "../components/Post/addPostForm";
 import Home from "../screens/Home";
 import UserProfile from "../screens/UserProfile";
@@ -50,6 +51,7 @@ export default function MainNavigator({ route }) {
       <Tab.Screen name="Home" component={PostStack} initialParams={state} />
       <Tab.Screen name="Categories" component={CategoriesScreen} />
       <Tab.Screen name=" " component={PostForm} initialParams={state} />
+      <Tab.Screen name=" " component={PostFormStack} initialParams={state} />
       <Tab.Screen name="Competitions" component={CompetitionStack} initialParams={state} />
       <Tab.Screen
         name="User Profile"
