@@ -25,7 +25,7 @@ function AuthContextProvider(props) {
 
           if (jsonRes.success) {
             // Saving the token in SecureStore
-            const decodedToken = jwt_decode(jsonRes.data.token);
+            
 
             await SecureStore.setItemAsync("userToken", jsonRes.data.token);
             const decodedToken = jwt_decode(jsonRes.data.token);

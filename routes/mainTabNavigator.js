@@ -50,7 +50,6 @@ export default function MainNavigator({ route }) {
       }}>
       <Tab.Screen name="Home" component={PostStack} initialParams={state} />
       <Tab.Screen name="Categories" component={CategoriesScreen} />
-      <Tab.Screen name=" " component={PostForm} initialParams={state} />
       <Tab.Screen name=" " component={PostFormStack} initialParams={state} />
       <Tab.Screen name="Competitions" component={CompetitionStack} initialParams={state} />
       <Tab.Screen

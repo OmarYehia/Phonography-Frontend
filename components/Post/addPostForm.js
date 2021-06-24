@@ -104,7 +104,7 @@ class addPostForm extends Component {
         myForm.append('caption', this.state.caption);
         myForm.append('category', this.state.category);
         myForm.append('meta_data', Platform.__constants.Model);
-        myForm.append('competition',this.state.competition);
+      this.state.competition ? myForm.append('competition',this.state.competition):null;
 
         console.log("before fetch");
         if (this.state.caption && this.state.image) {
@@ -210,8 +210,8 @@ class addPostForm extends Component {
                     ) : (
                         <>
                             <Text>Preview: </Text>
-                            <Image source={require("./y9DpT.jpg")}
-                                style={{ width: Dimensions.get('window').width - 20, height: 200, margin: 10 }} />
+                           {/* <Image source={require("./y9DpT.jpg")}
+                                style={{ width: Dimensions.get('window').width - 20, height: 200, margin: 10 }} />*/}
                         </>
                     )
                 }
