@@ -16,6 +16,7 @@ import { BACKEND_URL } from "../../ENV";
 import { API_URL } from "../../@env";
 import { TOKEN } from "../../ENV";
 import Post from "./Post";
+import Spinner from "react-native-loading-spinner-overlay";
 
 export class allPosts extends Component {
   constructor(props) {
@@ -27,15 +28,23 @@ export class allPosts extends Component {
   }
   componentDidMount() {
     this.state.loading = true;
-    fetch(`${API_URL}/posts`, {
+    fetch(`${BACKEND_URL}/posts/following`, {
       headers: {
         "content-type": "application/json",
-        Authorization: `Bearer ${TOKEN}`,
+        Authorization: `Bearer ${this.props.route.params.userToken}`,
       },
     })
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
+          result.data.post.sort((a, b) => {
+            let da = new Date(a.created_at),
+              db = new Date(b.created_at);
+            return db - da;
+          });
+          result.data.post.forEach((e) => {
+            e.image;
+          });
           this.setState({ loading: false, posts: result.data.post });
         } else {
           Alert.alert(result.errors.message);
@@ -46,7 +55,7 @@ export class allPosts extends Component {
     return (
       <ScrollView>
         {this.state.loading ? (
-          <Text>Loading ...</Text>
+          <Spinner visible={this.state.loading} />
         ) : this.state.posts.length ? (
           this.state.posts.map((post) => (
             <Post

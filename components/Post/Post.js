@@ -17,19 +17,13 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { Card, Button, Icon, Input, Overlay, ListItem, Avatar } from "react-native-elements";
 import { BACKEND_URL } from "../../ENV";
-import { API_URL } from "../../@env";
 import jwt_decode from "jwt-decode";
-import { TOKEN } from "../../ENV";
-import avatar from "../../assets/default-avatar.jpg";
-import Zicon from "react-native-vector-icons/FontAwesome";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import { List } from "react-native-paper";
-
 export class Post extends Component {
   constructor(props) {
     super();
-    const decodedToken = jwt_decode(TOKEN);
+    const decodedToken = jwt_decode(props.token);
     this.state = {
       currentUserId: decodedToken.userId,
       post: props.post,
@@ -43,6 +37,8 @@ export class Post extends Component {
       onePostSelected: false,
       token: props.token,
       lastPress: 0,
+      postOwner: props.post.author._id,
+      imageLoadError: false,
     };
   }
   onPress = () => {
@@ -57,7 +53,8 @@ export class Post extends Component {
     });
   };
   componentDidMount() {
-    fetch(`${API_URL}/comment/post/${this.state.post._id}`, {
+    this.state.imageLoadError = false;
+    fetch(`${BACKEND_URL}/comment/post/${this.state.post._id}`, {
       headers: {
         Authorization: `Bearer ${this.state.token}`,
       },
@@ -79,7 +76,7 @@ export class Post extends Component {
     if (!this.state.liked) {
       console.log("like post");
 
-      fetch(`${API_URL}/posts/${this.state.post._id}/like`, {
+      fetch(`${BACKEND_URL}/posts/${this.state.post._id}/like`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${this.state.token}`,
@@ -98,7 +95,7 @@ export class Post extends Component {
         });
     } else {
       console.log("Unlike post");
-      fetch(`${API_URL}/posts/${this.state.post._id}/unlike`, {
+      fetch(`${BACKEND_URL}/posts/${this.state.post._id}/unlike`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${this.state.token}`,
@@ -124,7 +121,7 @@ export class Post extends Component {
       body: this.state.comment,
     };
     console.log(sentBody);
-    fetch(`${API_URL}/comment`, {
+    fetch(`${BACKEND_URL}/comment`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -151,7 +148,7 @@ export class Post extends Component {
     this.props.navigation.navigate("UserProfile", item);
   };
   deleteComment = (id) => {
-    fetch(`${API_URL}/comment/${id}`, {
+    fetch(`${BACKEND_URL}/comment/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${this.state.token}`,
@@ -176,7 +173,7 @@ export class Post extends Component {
           <ListItem
             containerStyle={{ padding: 0 }}
             onPress={() =>
-              this.pressHandler({ userId: this.state.currentUserId, token: this.state.token })
+              this.pressHandler({ userId: this.state.postOwner, token: this.state.token })
             }>
             <Avatar rounded size="small" source={require("../../assets/default-avatar.jpg")} />
             <ListItem.Content>
@@ -187,9 +184,13 @@ export class Post extends Component {
         </Card.Title>
 
         <Card.Divider />
-        <Card.Image
-          source={{ uri: this.state.post.image }}
-          onPress={() => this.onPress()}></Card.Image>
+        {!this.state.imageLoadError && (
+          <Card.Image
+            source={{ uri: this.state.post.image }}
+            onError={() => this.setState({ imageLoadError: true })}
+            onPress={() => this.onPress()}></Card.Image>
+        )}
+
         <Text style={{ margin: 10 }}>{this.state.post.caption}</Text>
         <Text style={{ margin: 10, color: "#f01d71", textAlign: "right" }}>
           #{this.state.post.category.name}
@@ -252,7 +253,7 @@ export class Post extends Component {
               <ListItem
                 containerStyle={{ padding: 0 }}
                 onPress={() =>
-                  this.pressHandler({ userId: this.state.currentUserId, token: this.state.token })
+                  this.pressHandler({ userId: this.state.postOwner, token: this.state.token })
                 }>
                 <Avatar rounded size="small" source={require("../../assets/default-avatar.jpg")} />
                 <ListItem.Content>
@@ -262,7 +263,10 @@ export class Post extends Component {
               </ListItem>
             </Card.Title>
             <Card.Divider />
-            <Card.Image source={{ uri: this.state.post.image }}></Card.Image>
+
+            <Card.Image
+              source={{ uri: this.state.post.image }}
+              onPress={() => this.onPress()}></Card.Image>
             <Text style={{ margin: 10 }}>{this.state.post.caption}</Text>
             <Text style={{ margin: 10, color: "#f01d71" }}>#{this.state.post.category.name}</Text>
             <Text style={{ margin: 10 }} onPress={() => this.toggleOnePostSelected()}>
