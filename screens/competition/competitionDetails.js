@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View,ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View,ScrollView, TouchableOpacity,  Alert } from "react-native";
 import { globalStyles } from "../../styles/global";
 import Card from "../../components/shared/card";
 import { Ionicons } from "@expo/vector-icons";
@@ -59,27 +59,35 @@ export default function CompetitionDetails({ route, navigation }) {
           }
   };
   const disjoinHandler = async () => {
-    try {
-      const res = await fetch(`${API_URL}/competition/${route.params._id}/competitor/remove`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userToken}`,
+    Alert.alert("Warning", `If you quit this contest your posts will be deleted, Are you sure?`, [
+      {
+        text: "yes",
+        onPress: async () => {
+          try {
+            const res = await fetch(`${API_URL}/competition/${route.params._id}/competitor/remove`, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userToken}`,
+              },
+              method: "PUT",
+            });
+      
+            const jsonRes = await res.json();
+            if (jsonRes.Success) {
+              setIsJoined(false);
+              setChanged(!changed)
+              //   console.log(isJoined);
+            }
+            // console.log(jsonRes);
+            return jsonRes;
+          } catch (error) {
+            console.log(error);
+            return error;
+          }
         },
-        method: "PUT",
-      });
-
-      const jsonRes = await res.json();
-      if (jsonRes.Success) {
-        setIsJoined(false);
-        setChanged(!changed)
-        //   console.log(isJoined);
-      }
-      // console.log(jsonRes);
-      return jsonRes;
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
+      },
+      { text: "No" },
+    ]);
   };
   const endContestHandler = async () => {
     let winnerId
