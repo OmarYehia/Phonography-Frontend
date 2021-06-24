@@ -16,6 +16,8 @@ import { API_URL } from "../../@env";
 import { MaterialIcons } from "@expo/vector-icons";
 import CompetitionForm from "./CompetitionForm";
 import jwt_decode from "jwt-decode";
+import { showMessage } from "react-native-flash-message";
+
 
 export default function Competition({ route, navigation }) {
   const [competitions, setCompetitions] = useState(null);
@@ -24,7 +26,7 @@ export default function Competition({ route, navigation }) {
   const [competition, setCompetition] = useState(null);
   const [currentUserRole, setCurrentUserRole] = useState(null);
   const [changed, setChanged] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   const userToken = route.params.userToken;
 
   const pressHandler = (item) => {
@@ -46,8 +48,21 @@ export default function Competition({ route, navigation }) {
 
             const jsonRes = await res.json();
             setChanged(!changed);
-            console.log(jsonRes);
-            return jsonRes;
+            if (jsonRes.Success) {
+              showMessage({
+                message: `Contest deleted succesfully!`,
+                type: "success",
+                duration: 2500,
+                icon: "auto",
+              });
+            } else {
+              showMessage({
+                message: `Contest wasn't deleted. Something went wrong.`,
+                type: "danger",
+                duration: 2500,
+                icon: "auto",
+              });
+            }
           } catch (error) {
             console.log(error);
             return error;
@@ -83,6 +98,7 @@ export default function Competition({ route, navigation }) {
       })
       .then((data) => {
         setCompetitions(data.data.competitions);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -121,7 +137,6 @@ export default function Competition({ route, navigation }) {
           onPress={() => setModalOpen(true)}
         />
       ) : null}
-
       <FlatList
         data={competitions}
         keyExtractor={(item) => item._id}

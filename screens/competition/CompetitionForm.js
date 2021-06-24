@@ -12,6 +12,7 @@ import DatePicker from "react-native-datepicker";
 //import { Dropdown } from 'react-native-material-dropdown-v2';
 import { Picker } from "@react-native-picker/picker";
 import { LogBox } from "react-native";
+import { showMessage } from "react-native-flash-message";
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -27,7 +28,7 @@ const competitionSchema = yup.object({
 });
 
 export default function CompetitionForm({ userToken, flag, competition }) {
-  const [sponsor, setSponsor] = useState(null);
+  const [sponsor, setSponsor] = useState(flag? competition.sponsor._id :null);
   const [sponsors, setSponsors] = useState([]);
   const [itemData, setItemData] = useState(
     flag
@@ -35,8 +36,8 @@ export default function CompetitionForm({ userToken, flag, competition }) {
           name: competition.name,
           startDate: competition.startDate,
           endDate: competition.endDate,
-          sponsor: competition.sponsor.name,
-          prizes: competition.prizes[0],
+          sponsor: competition.sponsor._id,
+          prizes: competition.prizes,
         }
       : {
           name: "",
@@ -78,7 +79,8 @@ export default function CompetitionForm({ userToken, flag, competition }) {
       });
 
       const jsonRes = await res.json();
-      console.log(jsonRes);
+     
+      
       return jsonRes;
     } catch (error) {
       return error;
@@ -97,7 +99,7 @@ export default function CompetitionForm({ userToken, flag, competition }) {
       });
 
       const jsonRes = await res.json();
-      console.log("json request", jsonRes);
+      
       return jsonRes;
     } catch (error) {
       return error;
@@ -110,16 +112,28 @@ export default function CompetitionForm({ userToken, flag, competition }) {
         initialValues={itemData}
         validationSchema={competitionSchema}
         onSubmit={async (values, actions) => {
-          actions.resetForm();
-          console.log(values);
           let res;
           if (!flag) {
+            actions.resetForm();
+            setSponsor(null);
             res = await addCompetition(values);
           } else if (flag) {
             res = await editCompetition(values);
           }
-          console.log(res);
-          if (!res.Success) {
+          if (res.Success) {
+            showMessage({
+              message: `Contest ${flag ? "updated" : "created"} succesfully!`,
+              type: "success",
+              duration: 2500,
+              icon: "auto",
+            });
+          } else {
+            showMessage({
+              message: `Contest wasn't ${flag ? "updated" : "created"}. Something went wrong.`,
+              type: "danger",
+              duration: 2500,
+              icon: "auto",
+            });
             let message = "";
             if (res.errors.name) {
               message += `${res.errors.name}`;
@@ -136,7 +150,10 @@ export default function CompetitionForm({ userToken, flag, competition }) {
             if (res.errors.prizes) {
               message += `${res.errors.prizes}`;
             }
-            Alert.alert("These errors occured while trying to create the competition:", message, [
+            else{
+              message += `${res.errors.message}`
+            }
+            Alert.alert(`These errors occured while trying to ${flag ? "Edit" : "create"}  the competition:`, message, [
               { text: "Try again" },
             ]);
           }
@@ -187,9 +204,10 @@ export default function CompetitionForm({ userToken, flag, competition }) {
               mode="dropdown"
               onValueChange={(itemValue, itemIndex) => {
                 props.setFieldValue("sponsor", itemValue);
+                console.log(sponsor)
                 setSponsor(itemValue);
               }}>
-              <Picker.Item label="Select a sponsor" value="#" />
+              <Picker.Item label="Select a sponsor" value={flag? sponsor :"#"} />
               {sponsors.length ? (
                 sponsors.map((each) => {
                   return <Picker.Item key={each._id} label={each.name} value={each._id} />;
