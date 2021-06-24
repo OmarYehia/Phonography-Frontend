@@ -18,6 +18,7 @@ import CompetitionForm from "./CompetitionForm";
 import jwt_decode from "jwt-decode";
 import { showMessage } from "react-native-flash-message";
 
+
 export default function Competition({ route, navigation }) {
   const [competitions, setCompetitions] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -25,7 +26,7 @@ export default function Competition({ route, navigation }) {
   const [competition, setCompetition] = useState(null);
   const [currentUserRole, setCurrentUserRole] = useState(null);
   const [changed, setChanged] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   const userToken = route.params.userToken;
 
   const pressHandler = (item) => {
@@ -97,6 +98,7 @@ export default function Competition({ route, navigation }) {
       })
       .then((data) => {
         setCompetitions(data.data.competitions);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -135,7 +137,6 @@ export default function Competition({ route, navigation }) {
           onPress={() => setModalOpen(true)}
         />
       ) : null}
-
       <FlatList
         data={competitions}
         keyExtractor={(item) => item._id}

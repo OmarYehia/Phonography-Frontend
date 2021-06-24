@@ -6,6 +6,7 @@ import Card from '../../components/shared/card';
 import { Ionicons } from '@expo/vector-icons';
 import { API_URL } from "../../@env";
 import SolidButton from '../../components/shared/SolidButton';
+import { FontAwesome5 } from '@expo/vector-icons';
 import jwt_decode from "jwt-decode";
 
 
@@ -13,10 +14,11 @@ export default function Competitor({ route, navigation}){
    const [competitors, setCompetitors] = useState(null);
    const [isFriend, setIsFriend] = useState();
    const [changed, setChanged] = useState(false);
+   const [winner, setWinner] = useState(route.params.winner ?route.params.winner._id: null )
    
 
    const userToken = route.params.userToken;
-   
+   console.log(route.params);
 
    const pressHandler = (userId) => {
        navigation.navigate("User Profile",{userId});
@@ -107,6 +109,9 @@ export default function Competitor({ route, navigation}){
                           <View style={{flexDirection: 'row'}}>
                            <Avatar rounded size="small" source={require("../../assets/default-avatar.jpg")}  />
                            <Text style={{...globalStyles.titleText,marginLeft:10}}>{item.name}</Text>
+                           {winner === item._id ? 
+                            <FontAwesome5 name="award" size={30} color="crimson" />: null
+                          }
                           </View>
                         
                            { route.params.currentUserId !== item._id  ?

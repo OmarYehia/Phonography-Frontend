@@ -9,6 +9,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 
 
+
 export class Post extends Component {
     constructor(props) {
         super();
@@ -28,7 +29,10 @@ export class Post extends Component {
             lastPress: 0,
             postOwner: props.post.author._id,
             imageLoadError: false,
+            
         }
+        
+        
     }
     onPress = () => {
         var delta = new Date().getTime() - this.state.lastPress;
