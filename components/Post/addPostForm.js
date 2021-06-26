@@ -137,7 +137,7 @@ class addPostForm extends Component {
                             duration: 2500,
                             icon: "auto",
                         });
-                        this.props.navigation.navigate("Home", this.props)
+                        this.state.competition ? this.props.navigation.navigate("Contests", this.props): this.props.navigation.navigate("Home", this.props)
                     }
                     console.log(result);
                 })

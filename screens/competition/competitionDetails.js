@@ -28,6 +28,8 @@ export default function CompetitionDetails({ route, navigation }) {
   const [winnerPost, setWinnerPost] = useState();
   const userToken = route.params.userToken;
   const userRole = route.params.role
+
+  console.log(route);
   
 
     const pressHandler = (competitionId,currentUserId, userToken, winner) => {

@@ -8,6 +8,7 @@ import UserProfile from "../screens/UserProfile";
 const Stack = createStackNavigator();
 
 export default function CompetitionStack({route}) {
+  route.params.refresh = true;
   const state = route.params;
  // console.log(state);
   return (
