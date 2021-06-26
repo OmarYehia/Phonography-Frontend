@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, TextInput, Image, Button, Platform, Dimensions, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { BACKEND_URL } from '../../ENV'
+import { BACKEND_URL } from '../../ENV';
+import { API_URL } from "../../@env";
 import { TOKEN } from '../../ENV'
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
@@ -12,6 +13,8 @@ import Spinner from "react-native-loading-spinner-overlay";
 class addPostForm extends Component {
     constructor(props) {
         super();
+        console.log("id", props.competitionId)
+        console.log("route", props.route.params.userToken)
         this.state = {
             caption: null,
             category: null,
@@ -20,9 +23,10 @@ class addPostForm extends Component {
             captionError: "Caption can not be empty and must be at least 2 characters long",
             imageError: "Please select an image",
             disabled: true,
-            width:null,
-            height:null,
-            loading: false
+            width: null,
+            height: null,
+            loading: false,
+            competition: props.competitionId ? props.competitionId : null
         }
     }
     componentDidMount() {
@@ -39,7 +43,7 @@ class addPostForm extends Component {
                 }
             }
         })
-        fetch(`${BACKEND_URL}/categories`, {
+        fetch(`${API_URL}/categories`, {
             headers: {
                 'Authorization': `Bearer ${this.props.route.params.userToken} `
             }
@@ -61,7 +65,7 @@ class addPostForm extends Component {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             quality: 1,
-            aspect: [4,3],
+            aspect: [4, 3],
             base64: true
         });
 
@@ -77,7 +81,7 @@ class addPostForm extends Component {
         let result = await ImagePicker.launchCameraAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect:[4,3],
+            aspect: [4, 3],
             quality: 1,
             base64: true
         })
@@ -103,13 +107,14 @@ class addPostForm extends Component {
         myForm.append('caption', this.state.caption);
         myForm.append('category', this.state.category);
         myForm.append('meta_data', Platform.__constants.Model);
+        this.state.competition ? myForm.append('competition', this.state.competition) : null;
 
         console.log("before fetch");
         if (this.state.caption && this.state.image) {
 
-            this.setState({loading: true})
+            this.setState({ loading: true })
 
-            fetch(`${BACKEND_URL}/posts`, {
+            fetch(`${API_URL}/posts`, {
                 method: "POST",
                 headers: {
                     'Authorization': `Bearer ${this.props.route.params.userToken} `,
@@ -121,7 +126,7 @@ class addPostForm extends Component {
                 .then(response => response.json())
                 .then(result => {
                     if (result.success) {
-                        this.setState({loading: false})
+                        this.setState({ loading: false })
 
                         console.log("success");
                         showMessage({
@@ -129,7 +134,7 @@ class addPostForm extends Component {
                             type: "success",
                             duration: 2500,
                             icon: "auto",
-                          });
+                        });
                         this.props.navigation.navigate("Home", this.props)
                     }
                     console.log(result);
@@ -153,17 +158,17 @@ class addPostForm extends Component {
             this.setState({ disabled: true })
         }
     }
-    getDimensions =  () => {
+    getDimensions = () => {
         Image.getSize(this.state.image.uri, (width, height) => {
-            this.setState({width:width , height: height})
+            this.setState({ width: width, height: height })
         })
-        
+
     }
     render() {
         this.state.image ? this.state.imageError = null : this.state.imageError = "Please choose an image"
         this.state.caption ? this.state.captionError = null : this.state.captionError = "Please write a caption"
         this.state.imageError == null && this.state.captionError == null ? this.state.disabled = false : this.state.disabled = true
-      
+
         return (
             <ScrollView>
                 <Spinner visible={this.state.loading} />
@@ -202,7 +207,7 @@ class addPostForm extends Component {
 
                             <Text>Preview: </Text>
                             <View>
-                                <Image source={{ uri: this.state.image.uri }} 
+                                <Image source={{ uri: this.state.image.uri }}
                                     style={{ width: Dimensions.get('window').width - 20, height: 300, margin: 10 }} />
                                 <FontAwesome name="remove" style={{
                                     margin: 10,

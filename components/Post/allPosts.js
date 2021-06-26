@@ -15,6 +15,7 @@ export class allPosts extends Component {
             posts: [],
             loading: true,
         }
+        
     }
     componentDidMount() {
         this.unsubscribe = this.props.navigation.addListener('focus', () => {

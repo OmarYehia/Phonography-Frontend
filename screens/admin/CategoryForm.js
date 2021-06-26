@@ -29,10 +29,10 @@ const categorySchema = yup.object({
 });
 
 export default function CategoryForm({ navigation, route }) {
-  const { userToken, categoryId } = route.params;
-  const [image, setImage] = useState(null);
+  const { userToken } = route.params;
+  const [image, setImage] = useState(route.params.editImage || null);
   const [loading, setLoading] = useState(false);
-  const [createForm, setCreateForm] = useState(true);
+  const [createForm, setCreateForm] = useState(route.params.editId ? false : true);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -55,7 +55,7 @@ export default function CategoryForm({ navigation, route }) {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Formik
         initialValues={{
-          name: "",
+          name: route.params.editName || "",
         }}
         validationSchema={categorySchema}
         onSubmit={async (values, actions) => {
@@ -98,7 +98,7 @@ export default function CategoryForm({ navigation, route }) {
               });
             }
           } else {
-            const res = await fetch(`${API_URL}/categories/${categoryId}`, {
+            const res = await fetch(`${API_URL}/categories/${route.params.editId}`, {
               method: "PUT",
               headers: {
                 "Content-Type": "multipart/form-data",
@@ -108,6 +108,22 @@ export default function CategoryForm({ navigation, route }) {
             });
 
             jsonRes = await res.json();
+            if (jsonRes.success) {
+              showMessage({
+                message: "Category updated succesfully!",
+                type: "success",
+                duration: 2500,
+                icon: "auto",
+              });
+              route.params.setChanged(route.params.changed);
+            } else {
+              showMessage({
+                message: "Category wasn't updated. Something went wrong.",
+                type: "danger",
+                duration: 2500,
+                icon: "auto",
+              });
+            }
           }
           setLoading(false);
           if (!jsonRes.success) {
@@ -148,7 +164,10 @@ ${jsonRes.errors.image}
 
               {image && (
                 <View>
-                  <Image source={{ uri: image.uri }} style={styles.previewImage} />
+                  <Image
+                    source={{ uri: route.params.editImage || image.uri }}
+                    style={styles.previewImage}
+                  />
                 </View>
               )}
               <View>

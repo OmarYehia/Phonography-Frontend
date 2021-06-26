@@ -17,7 +17,7 @@ export class allPosts extends Component {
     }
     componentDidMount() {
         this.state.loading = true;
-        fetch(`${BACKEND_URL}/posts/category/${this.props.route.params.categoryId}`, {
+        fetch(`${API_URL}/posts/category/${this.props.route.params.categoryId}`, {
             headers: {
                 'content-type': 'application/json',
                 'Authorization': `Bearer ${this.props.route.params.userToken}`

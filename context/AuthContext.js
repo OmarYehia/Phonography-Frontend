@@ -22,11 +22,13 @@ function AuthContextProvider(props) {
           });
 
           const jsonRes = await res.json();
-          const decodedToken = jwt_decode(jsonRes.data.token);
 
           if (jsonRes.success) {
             // Saving the token in SecureStore
+            
+
             await SecureStore.setItemAsync("userToken", jsonRes.data.token);
+            const decodedToken = jwt_decode(jsonRes.data.token);
             props.dispatch({
               type: "SIGN_IN",
               token: jsonRes.data.token,
@@ -37,6 +39,7 @@ function AuthContextProvider(props) {
 
           return jsonRes;
         } catch (error) {
+          console.log(error);
           return error;
         }
       },
