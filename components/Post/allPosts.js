@@ -21,7 +21,7 @@ export class allPosts extends Component {
         this.unsubscribe = this.props.navigation.addListener('focus', () => {
             this.state.loading = true;
             this.state.redirected = false;
-            fetch(`${BACKEND_URL}/posts/following`, {
+            fetch(`${API_URL}/posts/following`, {
                 headers: {
                     'content-type': 'application/json',
                     'Authorization': `Bearer ${this.props.route.params.userToken}`

@@ -102,7 +102,7 @@ export default function App() {
     // Fetch the token from  storage
     const bootstrapAsync = async () => {
       let userToken;
-       await SecureStore.setItemAsync("userToken", "");
+      // await SecureStore.setItemAsync("userToken", "");
 
       try {
         userToken = await SecureStore.getItemAsync("userToken");

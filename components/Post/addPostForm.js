@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, TextInput, Image, Button, Platform, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image, Button, Platform, Dimensions, ScrollView, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { BACKEND_URL } from '../../ENV';
 import { API_URL } from "../../@env";
@@ -8,6 +8,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
 import { showMessage } from "react-native-flash-message";
 import Spinner from "react-native-loading-spinner-overlay";
+import SolidButton from "../shared/SolidButton";
+import { globalStyles } from "../../styles/global"
 
 
 class addPostForm extends Component {
@@ -142,7 +144,7 @@ class addPostForm extends Component {
                 .catch(err => console.log(err))
         } else {
             let message = ""
-            this.state.image ? "" : message += "Please choose a message before submitting"
+            this.state.image ? "" : message += "Please choose a message before submitting, "
             this.state.caption ? "" : message += "Please enter caption before submittong"
             Alert.alert(message)
         }
@@ -170,36 +172,40 @@ class addPostForm extends Component {
         this.state.imageError == null && this.state.captionError == null ? this.state.disabled = false : this.state.disabled = true
 
         return (
+            <View style={styles.formContainer}>
             <ScrollView>
                 <Spinner visible={this.state.loading} />
-                <TextInput style={styles.input} placeholder="Enter Caption" onChangeText={text => {
-                    this.validate();
-                    this.setState({ caption: text })
-                }} />
-                <Text>
-                    {this.state.captionError ? `*${this.state.captionError}` : ""}
+                <View style={styles.inputFieldsContainer}>
+                    <View style={styles.inputGroup}>
+                          <TextInput style={{ ...styles.input, flex: 1 }} placeholder="Enter Caption" onChangeText={text => {
+                            this.validate();
+                            this.setState({ caption: text })
+                     }} />
+                    </View>
+                
+                <Text style={globalStyles.errorText}>
+                    { this.state.captionError ? `*${this.state.captionError}` : ""}
                 </Text>
-                <TextInput>
-                    Select a Category for your photo:
-                </TextInput>
                 <Picker selectedValue={this.state.category}
                     mode={'dialog'}
-                    style={{ height: 50, width: 150 }}
+                    style={{ height: 50, width: 250 }}
                     onValueChange={(itemValue) => {
                         this.setState({ category: itemValue })
                         console.log(this.state.category);
                     }}
                 >
+                    <Picker.Item label="Select a Category " value= "#" />
                     {this.state.categories && this.state.categories.map((each) => {
                         return (
                             <Picker.Item key={each._id} label={each.name} value={each._id} />
                         )
                     })}
                 </Picker>
-
-                <Button title="Pick an image from camera roll" onPress={this.pickImage} />
+                <View style={{flexDirection: 'row'}}>
+                <SolidButton text="Pick an image " onPress={this.pickImage} />
                 <Text>Or</Text>
-                <Button title="Take a photo" onPress={this.takePhoto} />
+                <SolidButton text="Take a photo" onPress={this.takePhoto} />
+                </View>
                 {
 
                     this.state.image ? (
@@ -222,15 +228,18 @@ class addPostForm extends Component {
                         </>
                     ) : (
                         <>
-                            <Text>Preview: </Text>
-                            <Image source={require("./y9DpT.jpg")}
-                                style={{ width: Dimensions.get('window').width - 20, height: 200, margin: 10 }} />
+                            {/* <Text>Preview: </Text>
+                           <Image source={require("./y9DpT.jpg")}
+                                style={{ width: Dimensions.get('window').width - 20, height: 200, margin: 10 }} />*/}
                         </>
                     )
                 }
-                <Button title="Post" disabled={this.state.disabled} onPress={this.submitPost} />
-
+                </View>
+                <View >
+                <SolidButton text="Post" disabled={this.state.disabled} onPress={this.submitPost} borderRadius={30} />
+            </View>
             </ScrollView >
+        </View>
         )
     }
 }
@@ -250,10 +259,30 @@ const styles = StyleSheet.create({
 
     },
     input: {
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
-        width: 200
-    },
+        paddingBottom: 6,
+        paddingTop: 10,
+      },
+    submitBtnContainer: {
+        width: 200,
+      },
+    formContainer: {
+        padding: 30,
+        flex: 1,
+        
+      },
+    inputFieldsContainer: {
+        flex: 1,
+        alignItems: "center",
+      },
+    inputGroup: {
+        marginVertical: 6,
+        flexDirection: "row",
+        alignItems: "center",
+        borderBottomColor: "#444",
+        borderBottomWidth: 1,
+      },
+      submitBtnContainer: {
+        width: 200,
+      },
 });
 export default addPostForm

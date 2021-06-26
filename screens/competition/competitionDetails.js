@@ -298,9 +298,11 @@ export default function CompetitionDetails({ route, navigation }) {
             <Text style={globalStyles.paragraph}>Join The Contest To post your Images</Text>
           </View>
         ) : (
+          <Card>
           <View >
             <AddPostForm competitionId={route.params._id} route={route} navigation={navigation}/>
           </View>
+          </Card>
         ): null}
        
       <ScrollView >
