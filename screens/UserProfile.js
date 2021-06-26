@@ -23,6 +23,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { showMessage } from "react-native-flash-message";
+import { SimpleLineIcons } from "@expo/vector-icons";
 
 const registerSchema = yup.object({
   email: yup
@@ -263,28 +264,34 @@ ${res.errors.country}
 
             <View style={styles.body}>
               {isProfileOwner && (
-                <TouchableOpacity onPress={() => handleAddImage(currentUser)}>
-                  <View style={styles.imageContainer}>
-                    <Image source={require("../assets/default-avatar.jpg")} style={styles.avatar} />
-                    <View style={styles.imageAdd}>
-                      <Entypo name="camera" size={34} color="#eee" />
+                <>
+                  <TouchableOpacity
+                    onPress={signOut}
+                    style={{ alignSelf: "flex-end", marginEnd: 20 }}>
+                    <View style={{ ...styles.button, flexDirection: "row", marginBottom: 20 }}>
+                      <SimpleLineIcons name="logout" size={24} color="white" />
+                      <Text style={{ ...styles.buttonText, marginStart: 15 }}>Sign Out</Text>
                     </View>
-                  </View>
-                </TouchableOpacity>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleAddImage(currentUser)}>
+                    <View style={styles.imageContainer}>
+                      <Image
+                        source={require("../assets/default-avatar.jpg")}
+                        style={styles.avatar}
+                      />
+                      <View style={styles.imageAdd}>
+                        <Entypo name="camera" size={34} color="#eee" />
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                </>
               )}
 
-              {
-                !isProfileOwner && (
-                  // <TouchableOpacity>
-                  <View style={styles.imageContainer}>
-                    <Image source={require("../assets/default-avatar.jpg")} style={styles.avatar} />
-                    {/* <View style={styles.imageAdd}>
-                  <Entypo name="camera" size={34} color="#eee" />
-                </View> */}
-                  </View>
-                )
-                // </TouchableOpacity>
-              }
+              {!isProfileOwner && (
+                <View style={styles.imageContainer}>
+                  <Image source={require("../assets/default-avatar.jpg")} style={styles.avatar} />
+                </View>
+              )}
 
               <Text style={{ ...globalStyles.titleText, ...styles.name }}>{user.name}</Text>
 
@@ -654,5 +661,22 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginTop: 20,
     marginBottom: 0,
+  },
+  button: {
+    marginTop: 20,
+    borderRadius: 5,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    backgroundColor: "#f01d71",
+    width: "30%",
+    alignSelf: "center",
+    elevation: 2,
+  },
+  buttonText: {
+    color: "white",
+    textTransform: "capitalize",
+    fontSize: 16,
+    textAlign: "center",
+    fontFamily: "nunito-bold",
   },
 });
