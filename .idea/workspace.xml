@@ -6,10 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="97fbff97-57d7-4625-ae61-72ff97c0087e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Post/Post.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Post/Post.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/Post/addPostForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Post/addPostForm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/mainTabNavigator.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/mainTabNavigator.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Post/allPosts.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Post/allPosts.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,9 +40,9 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="155" y="126" width="1110" height="541" key="AVDManager" timestamp="1624533064467">
+    <state x="155" y="126" width="1110" height="541" key="AVDManager" timestamp="1624697944392">
       <screen x="56" y="27" width="1310" height="741" />
     </state>
-    <state x="155" y="126" width="1110" height="541" key="AVDManager/56.27.1310.741/1366.0.1440.900@56.27.1310.741" timestamp="1624533064467" />
+    <state x="155" y="126" width="1110" height="541" key="AVDManager/56.27.1310.741/1366.0.1440.900@56.27.1310.741" timestamp="1624697944392" />
   </component>
 </project>

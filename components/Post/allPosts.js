@@ -17,30 +17,35 @@ export class allPosts extends Component {
         }
     }
     componentDidMount() {
-        this.state.loading = true;
-        this.state.redirected = false;
-        fetch(`${BACKEND_URL}/posts/following`, {
-            headers: {
-                'content-type': 'application/json',
-                'Authorization': `Bearer ${this.props.route.params.userToken}`
-            }
-        }).then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    result.data.post.sort((a,b)=>{
-                        let da = new Date(a.created_at),
-                            db = new Date(b.created_at)
-                        return db-da;
-                    })
-                    result.data.post.forEach((e)=>{
-                        e.image
-                    })
-                    this.setState({ loading: false, posts: result.data.post })
-                } else {
-                    Alert.alert(result.errors.message)
+        this.unsubscribe = this.props.navigation.addListener('focus', () => {
+            this.state.loading = true;
+            this.state.redirected = false;
+            fetch(`${BACKEND_URL}/posts/following`, {
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': `Bearer ${this.props.route.params.userToken}`
                 }
+            }).then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        result.data.post.sort((a, b) => {
+                            let da = new Date(a.created_at),
+                                db = new Date(b.created_at)
+                            return db - da;
+                        })
+                        result.data.post.forEach((e) => {
+                            e.image
+                        })
+                        this.setState({ loading: false, posts: result.data.post })
+                    } else {
+                        Alert.alert(result.errors.message)
+                    }
 
-            })
+                })
+        })
+    }
+    componentWillUnmount(){
+        this.unsubscribe()
     }
     render() {
         return (

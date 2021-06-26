@@ -29,6 +29,7 @@ export class Post extends Component {
             imageLoadError: false,
             heigth: null,
             width: null,
+            date: null,
         }
     }
     onPress = () => {
@@ -43,6 +44,23 @@ export class Post extends Component {
         })
     }
     componentDidMount() {
+        let diff = new Date(this.state.post.created_at).getTime() - new Date().getTime();
+        let daysDiff = Math.abs(Math.floor(diff / 1000 / 60 / 60 / 24));
+        let daysDiffText = daysDiff > 1 ? `${daysDiff} days ago` : `${daysDiff} day ago`
+        let hoursDiff = Math.abs(Math.floor(diff / 1000 / 60 / 60));
+        let hoursDiffText = hoursDiff > 1 ? `${hoursDiff} hours ago` : `${hoursDiff} hour ago`
+        let minutesDiff = Math.abs(Math.floor(diff / 1000 / 60));
+        let minutesDiffText = minutesDiff > 1 ? `${minutesDiff} minutes ago` : `${minutesDiff} minute ago`
+
+        if (hoursDiff > 24) {
+            this.setState({ date: daysDiffText })
+        } else {
+            if (minutesDiff > 60) {
+                this.setState({ date: hoursDiffText })
+            } else {
+                this.setState({ date: minutesDiffText })
+            }
+        }
         this.state.imageLoadError = false;
         fetch(`${BACKEND_URL}/comment/post/${this.state.post._id}`, {
             headers: {
@@ -152,15 +170,8 @@ export class Post extends Component {
                 }
             })
     }
-    getDimensions = () => {
-        Image.getSize(this.state.post.image, (width, height) => {
-            this.setState({ width: width, height: height })
-        })
-    }
+
     render() {
-        if (!this.state.imageLoadError) {
-            this.getDimensions()
-        }
         const alt = "Image Not availabe!";
         const { error } = this.state;
         return (
@@ -171,7 +182,7 @@ export class Post extends Component {
                             <Avatar onPress={() => this.pressHandler({ userId: this.state.postOwner, token: this.state.token })} rounded size="small" source={require("../../assets/default-avatar.jpg")} />
                             <ListItem.Content>
                                 <ListItem.Title onPress={() => this.pressHandler({ userId: this.state.postOwner, token: this.state.token })}>@{this.state.post.author.name}</ListItem.Title>
-                                <ListItem.Subtitle onPress={() => this.pressHandlerModel({ model : this.state.post.meta_data })}>{this.state.post.meta_data ? `Shot by ${this.state.post.meta_data}` : this.state.post.author.email}</ListItem.Subtitle>
+                                <ListItem.Subtitle onPress={() => this.pressHandlerModel({ model: this.state.post.meta_data })}>{this.state.post.meta_data ? `Shot by ${this.state.post.meta_data}` : this.state.post.author.email}</ListItem.Subtitle>
                             </ListItem.Content>
                         </ListItem>
                     </Card.Title>
@@ -184,8 +195,8 @@ export class Post extends Component {
                     <Text style={{ margin: 10, }}>
                         {this.state.post.caption}
                     </Text>
-                    <Text 
-                        onPress={() => this.pressHandlerCategory({ categoryId : this.state.post.category._id })}
+                    <Text
+                        onPress={() => this.pressHandlerCategory({ categoryId: this.state.post.category._id })}
                         style={{ margin: 10, color: '#f01d71', textAlign: 'right' }}>
                         #{this.state.post.category.name}
                     </Text>
@@ -194,8 +205,8 @@ export class Post extends Component {
                             {this.state.numberofLikes} Likes . {this.state.numberOfComments} Comments
 
                         </Text>
-                        <Text style={{ margin: 10, color: 'grey'}}>
-                            {this.state.post.created_at - Date.now()}
+                        <Text style={{ margin: 10, color: 'grey' }}>
+                            {this.state.date}
                         </Text>
                     </View>
                     <Card.Divider />

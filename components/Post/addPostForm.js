@@ -5,7 +5,9 @@ import { BACKEND_URL } from '../../ENV'
 import { TOKEN } from '../../ENV'
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { showMessage } from "react-native-flash-message";
+import Spinner from "react-native-loading-spinner-overlay";
+
 
 class addPostForm extends Component {
     constructor(props) {
@@ -19,7 +21,8 @@ class addPostForm extends Component {
             imageError: "Please select an image",
             disabled: true,
             width:null,
-            height:null
+            height:null,
+            loading: false
         }
     }
     componentDidMount() {
@@ -104,6 +107,7 @@ class addPostForm extends Component {
         console.log("before fetch");
         if (this.state.caption && this.state.image) {
 
+            this.setState({loading: true})
 
             fetch(`${BACKEND_URL}/posts`, {
                 method: "POST",
@@ -117,7 +121,15 @@ class addPostForm extends Component {
                 .then(response => response.json())
                 .then(result => {
                     if (result.success) {
+                        this.setState({loading: false})
+
                         console.log("success");
+                        showMessage({
+                            message: "Post created succesfully!",
+                            type: "success",
+                            duration: 2500,
+                            icon: "auto",
+                          });
                         this.props.navigation.navigate("Home", this.props)
                     }
                     console.log(result);
@@ -154,6 +166,7 @@ class addPostForm extends Component {
       
         return (
             <ScrollView>
+                <Spinner visible={this.state.loading} />
                 <TextInput style={styles.input} placeholder="Enter Caption" onChangeText={text => {
                     this.validate();
                     this.setState({ caption: text })
