@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { StyleSheet, Button, TextInput, View, Text, Alert } from "react-native";
+import { StyleSheet, Button, TextInput, View, Text, Alert, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { globalStyles } from "../../styles/global";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -24,7 +24,7 @@ const competitionSchema = yup.object({
     .required("Please Enter Competition End Date ")
     .min(yup.ref("startDate"), "end date can't be before start date"),
   sponsor: yup.string().required("Please choose a sponsor for the competition"),
-  prizes: yup.string().required(),
+  prizes: yup.string().required("Please Enter Competition Prize "),
 });
 
 export default function CompetitionForm({ userToken, flag, competition }) {
@@ -107,7 +107,7 @@ export default function CompetitionForm({ userToken, flag, competition }) {
   };
 
   return (
-    <View style={globalStyles.container}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Formik
         initialValues={itemData}
         validationSchema={competitionSchema}
@@ -159,14 +159,18 @@ export default function CompetitionForm({ userToken, flag, competition }) {
           }
         }}>
         {(props) => (
-          <View>
-            <TextInput
-              style={globalStyles.input}
+           <View style={styles.formContainer}>
+             <View style={styles.inputFieldsContainer}>
+              <View style={styles.inputGroup}>
+              <TextInput
+             style={{ ...styles.input, flex: 1 }}
               placeholder="Competition Name"
               onChangeText={props.handleChange("name")}
               value={props.values.name}
               onBlur={props.handleBlur("name")}
             />
+            </View>
+            </View>
             <Text style={globalStyles.errorText}>{props.touched.name && props.errors.name}</Text>
             <DatePicker
               style={{ width: 300 }}
@@ -219,14 +223,17 @@ export default function CompetitionForm({ userToken, flag, competition }) {
             <Text style={globalStyles.errorText}>
               {props.touched.sponsor && props.errors.sponsor}
             </Text>
-
+            <View style={styles.inputFieldsContainer}>
+              <View style={styles.inputGroup}>
             <TextInput
-              style={globalStyles.input}
-              placeholder="Prizes"
+              style={{ ...styles.input, flex: 1 }}
+              placeholder="Prize"
               onChangeText={props.handleChange("prizes")}
               value={props.values.prizes}
               onBlur={props.handleBlur("prizes")}
             />
+            </View>
+            </View>
             <Text style={globalStyles.errorText}>
               {props.touched.prizes && props.errors.prizes}
             </Text>
@@ -238,6 +245,29 @@ export default function CompetitionForm({ userToken, flag, competition }) {
           </View>
         )}
       </Formik>
-    </View>
+      </TouchableWithoutFeedback>
   );
 }
+const styles = StyleSheet.create({
+  formContainer: {
+    padding: 30,
+    flex: 1,
+    alignItems: "center",
+  },
+  inputFieldsContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+  inputGroup: {
+    marginVertical: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomColor: "#444",
+    borderBottomWidth: 1,
+  },
+  input: {
+    paddingBottom: 6,
+    paddingTop: 10,
+  },
+ 
+});

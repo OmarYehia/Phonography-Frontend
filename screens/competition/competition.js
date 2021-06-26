@@ -107,7 +107,7 @@ export default function Competition({ route, navigation }) {
 
   return (
     <View style={globalStyles.container}>
-      <Modal visible={modalOpen} animationType="slide">
+      <Modal visible={modalOpen} animationType="slide"  >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.modalContent}>
             <MaterialIcons
@@ -185,6 +185,8 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
   },
   itemContent: {
     flexDirection: "row",
